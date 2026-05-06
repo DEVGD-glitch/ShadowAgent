@@ -1,14 +1,14 @@
 @echo off
 setlocal enabledelayedexpansion
 REM ═══════════════════════════════════════════════════════════════
-REM GenericAgent — Prerequisite Checker for Windows
+REM Shadow Agent — Prerequisite Checker for Windows
 REM
 REM Works from ANY directory — auto-finds the project root.
 REM ═══════════════════════════════════════════════════════════════
 
 echo.
 echo ================================================================
-echo   GenericAgent - Windows Prerequisites Check
+echo   Shadow Agent - Windows Prerequisites Check
 echo ================================================================
 echo.
 
@@ -40,7 +40,7 @@ if exist "%SCRIPT_DIR%..\package.json" if exist "%SCRIPT_DIR%..\src-tauri" (
     goto :found_root
 )
 
-echo   ERROR: Cannot find GenericAgent project root!
+echo   ERROR: Cannot find Shadow Agent project root!
 echo.
 echo   Make sure you are in the project folder that contains:
 echo     - package.json
@@ -48,7 +48,7 @@ echo     - src\app\
 echo     - src-tauri\
 echo.
 echo   Try:
-echo     cd /d "%USERPROFILE%\Downloads\GenericAgent-Desktop-v1.2.0"
+echo     cd /d "%USERPROFILE%\Downloads\ShadowAgent"
 echo     scripts\check-prerequisites.bat
 echo.
 pause

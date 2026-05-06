@@ -2964,6 +2964,1223 @@
       "promptContext": {
         "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
       }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Now let me commit the changes and push them so the user can rebuild."
+        },
+        {
+          "type": "text",
+          "text": "Maintenant, commitez les changements et poussez-les :\n"
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_y894h4jocbnx_1",
+          "toolName": "power---bash",
+          "input": {
+            "command": "cd \"C:\\Users\\seydi\\Downloads\\GenericAgent-Desktop-v1.2.0-COMPLETE\"; git add -A; git commit -m \"Fix Tauri v2 configuration - removed invalid shell scope, updated backend spawning\"",
+            "timeout": 60000
+          }
+        }
+      ],
+      "id": "716627e4-d6fa-4fda-952c-7d90c9a17454",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 321,
+        "receivedTokens": 116,
+        "cacheReadTokens": 166651,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_y894h4jocbnx_1",
+          "toolName": "power---bash",
+          "output": {
+            "type": "json",
+            "value": {
+              "stdout": "[master c64c997] Fix Tauri v2 configuration - removed invalid shell scope, updated backend spawning\n 11 files changed, 1370 insertions(+), 129 deletions(-)\n create mode 100644 .aider-desk/tasks/a0fe1435-887c-4444-b18f-6b8febbfbda0/context.json\n",
+              "stderr": "warning: in the working copy of '.aider-desk/tasks/d27cc9a1-d089-40e4-851f-dedc84d70845/context.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.aider-desk/tasks/d27cc9a1-d089-40e4-851f-dedc84d70845/settings.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.aider.input.history', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'src-tauri/Cargo.toml', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'src-tauri/src/main.rs', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'src-tauri/tauri.conf.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'src/components/help/help-page.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.aider-desk/tasks/a0fe1435-887c-4444-b18f-6b8febbfbda0/context.json', LF will be replaced by CRLF the next time Git touches it\n",
+              "exitCode": 0
+            }
+          }
+        }
+      ],
+      "id": "e5451f80-1b99-482d-a08f-2d97923b4a22",
+      "promptContext": {
+        "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now let me push the changes."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_2hw4nzc5rhrc_1",
+          "toolName": "power---bash",
+          "input": {
+            "command": "cd \"C:\\Users\\seydi\\Downloads\\GenericAgent-Desktop-v1.2.0-COMPLETE\"; git push",
+            "timeout": 60000
+          }
+        }
+      ],
+      "id": "a09189f8-d447-44b1-b02c-735851d969bc",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 848,
+        "receivedTokens": 76,
+        "cacheReadTokens": 166651,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_2hw4nzc5rhrc_1",
+          "toolName": "power---bash",
+          "output": {
+            "type": "json",
+            "value": {
+              "stdout": "",
+              "stderr": "To https://github.com/DEVGD-glitch/GenericAgent_Shadow.git\n ! [rejected]        master -> master (fetch first)\nerror: failed to push some refs to 'https://github.com/DEVGD-glitch/GenericAgent_Shadow.git'\nhint: Updates were rejected because the remote contains work that you do not\nhint: have locally. This is usually caused by another repository pushing to\nhint: the same ref. If you want to integrate the remote changes, use\nhint: 'git pull' before pushing again.\nhint: See the 'Note about fast-forwards' in 'git push --help' for details.\n",
+              "exitCode": 1
+            }
+          }
+        }
+      ],
+      "id": "e916af59-533e-45b6-811e-af531f90fdea",
+      "promptContext": {
+        "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "There are remote changes. Let me pull and merge."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_r7zldsq8ef6j_1",
+          "toolName": "power---bash",
+          "input": {
+            "command": "cd \"C:\\Users\\seydi\\Downloads\\GenericAgent-Desktop-v1.2.0-COMPLETE\"; git pull --rebase; git push",
+            "timeout": 60000
+          }
+        }
+      ],
+      "id": "ef448eae-016c-4009-bbf6-4fcf43f71aad",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 192,
+        "receivedTokens": 84,
+        "cacheReadTokens": 167547,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_r7zldsq8ef6j_1",
+          "toolName": "power---bash",
+          "output": {
+            "type": "json",
+            "value": {
+              "stdout": "",
+              "stderr": "error: cannot pull with rebase: You have unstaged changes.\nerror: Please commit or stash them.\nTo https://github.com/DEVGD-glitch/GenericAgent_Shadow.git\n ! [rejected]        master -> master (fetch first)\nerror: failed to push some refs to 'https://github.com/DEVGD-glitch/GenericAgent_Shadow.git'\nhint: Updates were rejected because the remote contains work that you do not\nhint: have locally. This is usually caused by another repository pushing to\nhint: the same ref. If you want to integrate the remote changes, use\nhint: 'git pull' before pushing again.\nhint: See the 'Note about fast-forwards' in 'git push --help' for details.\n",
+              "exitCode": 1
+            }
+          }
+        }
+      ],
+      "id": "4f411b8e-a91f-496e-8033-8fd83f662adc",
+      "promptContext": {
+        "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Let me stash the changes, pull, and then apply them."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_tf70xj1nj8da_1",
+          "toolName": "power---bash",
+          "input": {
+            "command": "cd \"C:\\Users\\seydi\\Downloads\\GenericAgent-Desktop-v1.2.0-COMPLETE\"; git stash; git pull; git stash pop; git push",
+            "timeout": 120000
+          }
+        }
+      ],
+      "id": "1b5bd7f5-bdb1-438d-bbcf-8cd9dc1a1513",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 464,
+        "receivedTokens": 90,
+        "cacheReadTokens": 167547,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_tf70xj1nj8da_1",
+          "toolName": "power---bash",
+          "output": {
+            "type": "json",
+            "value": {
+              "stdout": "Saved working directory and index state WIP on master: c64c997 Fix Tauri v2 configuration - removed invalid shell scope, updated backend spawning\nMerge made by the 'ort' strategy.\n AUDIT_PLAN.md | 312 ----------------------------------------------------------\n 1 file changed, 312 deletions(-)\n delete mode 100644 AUDIT_PLAN.md\nOn branch master\nYour branch is ahead of 'origin/master' by 2 commits.\n  (use \"git push\" to publish your local commits)\n\nChanges not staged for commit:\n  (use \"git add <file>...\" to update what will be committed)\n  (use \"git restore <file>...\" to discard changes in working directory)\n\tmodified:   .aider-desk/tasks/d27cc9a1-d089-40e4-851f-dedc84d70845/context.json\n\nno changes added to commit (use \"git add\" and/or \"git commit -a\")\nDropped refs/stash@{0} (f19f4d10c62f086b230a6579c9b168d3ff8470a8)\n",
+              "stderr": "warning: in the working copy of '.aider-desk/tasks/d27cc9a1-d089-40e4-851f-dedc84d70845/context.json', LF will be replaced by CRLF the next time Git touches it\nFrom https://github.com/DEVGD-glitch/GenericAgent_Shadow\n   a2b0fa4..802fe32  master     -> origin/master\n * [new branch]      main       -> origin/main\nremote: This repository moved. Please use the new location:        \nremote:   https://github.com/DEVGD-glitch/ShadowAgent.git        \nTo https://github.com/DEVGD-glitch/GenericAgent_Shadow.git\n   802fe32..5e8d50b  master -> master\n",
+              "exitCode": 0
+            }
+          }
+        }
+      ],
+      "id": "8f5f57f2-3df3-4ba4-a06f-94462f15c4bd",
+      "promptContext": {
+        "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good, the changes are pushed. Now the user can rebuild the app with the fixed configuration."
+        },
+        {
+          "type": "text",
+          "text": "✅ **Les corrections ont été poussées sur GitHub !**\n\n**Modifications apportées :**\n1. ✅ Supprimé le champ `scope` invalide dans `tauri.conf.json`\n2. ✅ Mis à jour le code Rust pour démarrer le backend directement sans sidecar\n3. ✅ Configuré les ressources correctement avec `binaries/*`\n\n**Pour reconstruire l'app, lancez :**\n```bash\ncd C:\\Users\\seydi\\Downloads\\GenericAgent-Desktop-v1.2.0-COMPLETE\nbun run tauri build\n```\n\n**Note :** Le dépôt a été déplacé vers `https://github.com/DEVGD-glitch/ShadowAgent.git`"
+        }
+      ],
+      "id": "2be8cd94-1e09-4728-8bf6-1755ca67b906",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 550,
+        "receivedTokens": 168,
+        "cacheReadTokens": 167995,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "a9444c81-fd00-4da1-991c-1a728e5203e2"
+      }
+    },
+    {
+      "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52",
+      "role": "user",
+      "content": "regarde le script d'installation en un click s'il est bien car je l'utilise le build scripts/build-exe.bat",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "The user wants me to look at the one-click installation script to see if it's properly configured. They mentioned they're using `scripts/build-exe.bat` for the build. Let me check that script."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_9tcwwebbkchb_1",
+          "toolName": "power---file_read",
+          "input": {
+            "filePath": "scripts\\build-exe.bat",
+            "withLines": true,
+            "lineOffset": 0,
+            "lineLimit": 1000
+          }
+        }
+      ],
+      "id": "772b1fd3-70d0-4c37-85bf-36d5ae9264af",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 45209,
+        "receivedTokens": 86,
+        "cacheReadTokens": 122747,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_9tcwwebbkchb_1",
+          "toolName": "power---file_read",
+          "output": {
+            "type": "text",
+            "value": "1|@echo off\n2|setlocal enabledelayedexpansion\n3|REM ═══════════════════════════════════════════════════════════════\n4|REM GenericAgent — Windows Desktop Build Script (v6)\n5|REM\n6|REM Changes from v5:\n7|REM   - Auto-detect backend dir (upload\\GenericAgent-v1.2.0 OR backend\\)\n8|REM   - Copy final exe to project root for easy access\n9|REM   - Show clear instructions after build\n10|REM   - Add --skip-tauri flag for sidecar-only build\n11|REM   - Better error messages for common issues\n12|REM\n13|REM Usage:\n14|REM   scripts\\build-exe.bat                    # Build complet\n15|REM   scripts\\build-exe.bat --skip-sidecar     # Skip PyInstaller\n16|REM   scripts\\build-exe.bat --skip-frontend    # Skip Next.js build\n17|REM   scripts\\build-exe.bat --skip-tauri       # Skip Tauri (sidecar only)\n18|REM   scripts\\build-exe.bat --dev              # Mode developpement\n19|REM   scripts\\build-exe.bat --clean            # Nettoyer avant build\n20|REM ═══════════════════════════════════════════════════════════════\n21|\n22|echo.\n23|echo ================================================================\n24|echo   GenericAgent - Windows Desktop Builder v6\n25|echo ================================================================\n26|echo.\n27|\n28|REM ─── Parse Arguments ─────────────────────────────────────────\n29|set \"SKIP_SIDECAR=0\"\n30|set \"SKIP_FRONTEND=0\"\n31|set \"SKIP_TAURI=0\"\n32|set \"DEV_MODE=0\"\n33|set \"CLEAN=0\"\n34|\n35|:parse_args\n36|if \"%~1\"==\"\" goto :done_parsing\n37|if /i \"%~1\"==\"--skip-sidecar\" set \"SKIP_SIDECAR=1\"\n38|if /i \"%~1\"==\"--skip-frontend\" set \"SKIP_FRONTEND=1\"\n39|if /i \"%~1\"==\"--skip-tauri\" set \"SKIP_TAURI=1\"\n40|if /i \"%~1\"==\"--dev\" set \"DEV_MODE=1\"\n41|if /i \"%~1\"==\"--clean\" set \"CLEAN=1\"\n42|if /i \"%~1\"==\"--help\" goto :show_help\n43|if /i \"%~1\"==\"-h\" goto :show_help\n44|shift\n45|goto :parse_args\n46|:done_parsing\n47|\n48|REM ═══════════════════════════════════════════════════════════════\n49|REM AUTO-DETECT PROJECT ROOT — works from any directory!\n50|REM ═══════════════════════════════════════════════════════════════\n51|set \"SCRIPT_DIR=%~dp0\"\n52|set \"PROJECT_DIR=\"\n53|\n54|REM Method 1: Current directory has package.json + src-tauri\n55|if exist \"package.json\" if exist \"src-tauri\" (\n56|    set \"PROJECT_DIR=%cd%\"\n57|    goto :found_root\n58|)\n59|\n60|REM Method 2: Script is inside project/scripts/\n61|if exist \"%SCRIPT_DIR%..\\package.json\" if exist \"%SCRIPT_DIR%..\\src-tauri\" (\n62|    set \"PROJECT_DIR=%SCRIPT_DIR%..\"\n63|    goto :found_root\n64|)\n65|\n66|REM Method 3: Current directory has package.json + src/app\n67|if exist \"package.json\" if exist \"src\\app\" (\n68|    set \"PROJECT_DIR=%cd%\"\n69|    goto :found_root\n70|)\n71|\n72|REM Method 4: Script parent has package.json + src/app\n73|if exist \"%SCRIPT_DIR%..\\package.json\" if exist \"%SCRIPT_DIR%..\\src\\app\" (\n74|    set \"PROJECT_DIR=%SCRIPT_DIR%..\"\n75|    goto :found_root\n76|)\n77|\n78|echo   ERROR: Cannot find GenericAgent project root!\n79|echo.\n80|echo   Could not find package.json and src-tauri/ in:\n81|echo     Current dir:  %cd%\n82|echo     Script dir:   %SCRIPT_DIR%\n83|echo.\n84|echo   Please cd to the project folder first:\n85|echo     cd /d \"%USERPROFILE%\\Downloads\\GenericAgent-Desktop-v1.2.0\"\n86|echo     scripts\\build-exe.bat\n87|echo.\n88|pause\n89|exit /b 1\n90|\n91|:found_root\n92|REM Convert to absolute path and CD into it\n93|pushd \"%PROJECT_DIR%\"\n94|set \"PROJECT_DIR=%cd%\"\n95|popd\n96|\n97|echo   Project root: %PROJECT_DIR%\n98|echo.\n99|\n100|REM ─── Auto-Detect Backend Directory ───────────────────────────\n101|set \"BACKEND_DIR=\"\n102|\n103|REM Check 1: upload\\GenericAgent-v1.0.0 (standard location)\n104|if exist \"%PROJECT_DIR%\\upload\\GenericAgent-v1.0.0\\server.py\" (\n105|    set \"BACKEND_DIR=%PROJECT_DIR%\\upload\\GenericAgent-v1.0.0\"\n106|    echo   Backend found: upload\\GenericAgent-v1.0.0\n107|    goto :backend_found\n108|)\n109|\n110|REM Check 2: backend\\ (alternative location)\n111|if exist \"%PROJECT_DIR%\\backend\\server.py\" (\n112|    set \"BACKEND_DIR=%PROJECT_DIR%\\backend\"\n113|    echo   Backend found: backend\\\n114|    goto :backend_found\n115|)\n116|\n117|REM Check 3: GenericAgent-v1.2.0\\ (in project root)\n118|if exist \"%PROJECT_DIR%\\GenericAgent-v1.2.0\\server.py\" (\n119|    set \"BACKEND_DIR=%PROJECT_DIR%\\GenericAgent-v1.2.0\"\n120|    echo   Backend found: GenericAgent-v1.2.0\\\n121|    goto :backend_found\n122|)\n123|\n124|REM Check 4: Same directory as project root\n125|if exist \"%PROJECT_DIR%\\server.py\" (\n126|    set \"BACKEND_DIR=%PROJECT_DIR%\"\n127|    echo   Backend found: project root\n128|    goto :backend_found\n129|)\n130|\n131|echo   WARNING: Backend source not found!\n132|echo   Searched in:\n133|echo     %PROJECT_DIR%\\upload\\GenericAgent-v1.0.0\\\n134|echo     %PROJECT_DIR%\\backend\\\n135|echo.\n136|echo   The sidecar will NOT be built. Use --skip-sidecar to suppress.\n137|echo   The app will still work but without the Python backend.\n138|echo.\n139|\n140|:backend_found\n141|\n142|set \"BINARIES_DIR=%PROJECT_DIR%\\src-tauri\\binaries\"\n143|set \"SIDECAR_ENTRY=%BINARIES_DIR%\\sidecar_entry.py\"\n144|set \"DIST_DIR=%PROJECT_DIR%\\dist\"\n145|\n146|REM ═══════════════════════════════════════════════════════════════\n147|REM CD TO PROJECT ROOT — all subsequent commands run from here\n148|REM ═══════════════════════════════════════════════════════════════\n149|cd /d \"%PROJECT_DIR%\"\n150|\n151|REM ─── [0/6] Prerequisite Check ────────────────────────────────\n152|echo [0/6] Checking prerequisites...\n153|set \"HAS_ERRORS=0\"\n154|\n155|where bun >nul 2>&1\n156|if %errorlevel% neq 0 (\n157|    echo   [MISSING] bun - Install from https://bun.sh\n158|    set \"HAS_ERRORS=1\"\n159|) else (\n160|    for /f \"tokens=*\" %%v in ('bun --version 2^>nul') do echo   [OK] bun %%v\n161|)\n162|\n163|where node >nul 2>&1\n164|if %errorlevel% neq 0 (\n165|    echo   [MISSING] node - Install from https://nodejs.org\n166|    set \"HAS_ERRORS=1\"\n167|) else (\n168|    for /f \"tokens=*\" %%v in ('node --version 2^>nul') do echo   [OK] node %%v\n169|)\n170|\n171|where npx >nul 2>&1\n172|if %errorlevel% neq 0 (\n173|    echo   [MISSING] npm/npx - Install Node.js from https://nodejs.org\n174|    set \"HAS_ERRORS=1\"\n175|) else (\n176|    for /f \"tokens=*\" %%v in ('npx --version 2^>nul') do echo   [OK] npx %%v\n177|)\n178|\n179|where cargo >nul 2>&1\n180|if %errorlevel% neq 0 (\n181|    echo   [MISSING] cargo/rust - Install from https://rustup.rs\n182|    set \"HAS_ERRORS=1\"\n183|) else (\n184|    for /f \"tokens=*\" %%v in ('rustc --version 2^>nul') do echo   [OK] %%v\n185|)\n186|\n187|if not defined BACKEND_DIR (\n188|    echo   [SKIP] Python/PyInstaller - no backend source found\n189|) else (\n190|    where python >nul 2>&1\n191|    if %errorlevel% neq 0 (\n192|        echo   [MISSING] python - Install from https://python.org\n193|        set \"HAS_ERRORS=1\"\n194|    ) else (\n195|        for /f \"tokens=*\" %%v in ('python --version 2^>nul') do echo   [OK] %%v\n196|    )\n197|\n198|    if \"%SKIP_SIDECAR%\"==\"0\" (\n199|        where pyinstaller >nul 2>&1\n200|        if %errorlevel% neq 0 (\n201|            echo   [MISSING] pyinstaller - Run: pip install pyinstaller\n202|            set \"HAS_ERRORS=1\"\n203|        ) else (\n204|            for /f \"tokens=*\" %%v in ('pyinstaller --version 2^>nul') do echo   [OK] PyInstaller %%v\n205|        )\n206|    )\n207|)\n208|\n209|if \"%HAS_ERRORS%\"==\"1\" (\n210|    echo.\n211|    echo   ERROR: Missing prerequisites. Install them first.\n212|    echo.\n213|    pause\n214|    exit /b 1\n215|)\n216|\n217|echo   [OK] Project files found in %PROJECT_DIR%\n218|echo.\n219|\n220|REM ─── Clean if requested ──────────────────────────────────────\n221|if \"%CLEAN%\"==\"1\" (\n222|    echo [CLEAN] Removing build artifacts...\n223|    if exist \".next\" rmdir /s /q \".next\" 2>nul\n224|    if exist \"out\" rmdir /s /q \"out\" 2>nul\n225|    if defined BACKEND_DIR (\n226|        if exist \"%BACKEND_DIR%\\build\" rmdir /s /q \"%BACKEND_DIR%\\build\" 2>nul\n227|        if exist \"%BACKEND_DIR%\\dist\" rmdir /s /q \"%BACKEND_DIR%\\dist\" 2>nul\n228|        if exist \"%BACKEND_DIR%\\backend.spec\" del /q \"%BACKEND_DIR%\\backend.spec\" 2>nul\n229|    )\n230|    if exist \"src-tauri\\target\" rmdir /s /q \"src-tauri\\target\" 2>nul\n231|    echo   Cleaned.\n232|    echo.\n233|)\n234|\n235|REM ═══════════════════════════════════════════════════════════════\n236|REM [1/5] Install Node.js dependencies\n237|REM ═══════════════════════════════════════════════════════════════\n238|echo [1/5] Installing Node.js dependencies...\n239|call bun install\n240|if %errorlevel% neq 0 (\n241|    echo   ERROR: bun install failed\n242|    pause\n243|    exit /b 1\n244|)\n245|echo   OK: Dependencies installed\n246|echo.\n247|\n248|REM ═══════════════════════════════════════════════════════════════\n249|REM [2/5] Build Next.js frontend (static export → /out)\n250|REM ═══════════════════════════════════════════════════════════════\n251|if \"%SKIP_FRONTEND%\"==\"1\" (\n252|    echo [2/5] Skipping frontend build ^(--skip-frontend^)\n253|    echo.\n254|) else (\n255|    echo [2/5] Building Next.js frontend...\n256|    call bun run build\n257|    if %errorlevel% neq 0 (\n258|        echo   ERROR: Next.js build failed\n259|        pause\n260|        exit /b 1\n261|    )\n262|\n263|    REM Verify static export\n264|    if not exist \"out\\index.html\" (\n265|        echo   ERROR: Static export not found at out\\index.html\n266|        echo   Check that next.config.ts has: output: \"export\"\n267|        pause\n268|        exit /b 1\n269|    )\n270|    echo   OK: Frontend built ^(out\\index.html created^)\n271|    echo.\n272|)\n273|\n274|REM ═══════════════════════════════════════════════════════════════\n275|REM [3/5] Build Python sidecar with PyInstaller\n276|REM ═══════════════════════════════════════════════════════════════\n277|if \"%SKIP_SIDECAR%\"==\"1\" (\n278|    echo [3/5] Skipping sidecar build ^(--skip-sidecar^)\n279|    echo.\n280|) else if not defined BACKEND_DIR (\n281|    echo [3/5] No backend source found - skipping sidecar build\n282|    echo   The app will work but without the Python backend.\n283|    echo.\n284|) else if not exist \"%SIDECAR_ENTRY%\" (\n285|    echo [3/5] Sidecar entry point not found at %SIDECAR_ENTRY%\n286|    echo   ERROR: Missing src-tauri\\binaries\\sidecar_entry.py\n287|    pause\n288|    exit /b 1\n289|) else (\n290|    echo [3/5] Building Python sidecar with PyInstaller...\n291|    echo   Backend dir:  %BACKEND_DIR%\n292|    echo   Entry point:  %SIDECAR_ENTRY%\n293|    echo.\n294|\n295|    REM Install core Python dependencies (skip heavy ones)\n296|    echo   Installing core Python dependencies...\n297|    pip install --quiet fastapi uvicorn pydantic httpx edge-tts websockets anyio certifi 2>nul\n298|\n299|    REM Build with PyInstaller from the backend directory\n300|    pushd \"%BACKEND_DIR%\"\n301|\n302|    REM ── Build the --add-data list ──────────────────────────────\n303|    echo   Collecting backend source files...\n304|\n305|    set \"ADD_DATA=\"\n306|\n307|    REM Core Python packages (directories with __init__.py)\n308|    for %%d in (agentmain llmcore engine memory plugins tools reflect mcp protocols) do (\n309|        if exist \"%%d\" (\n310|            set \"ADD_DATA=!ADD_DATA! --add-data %%d;%%d\"\n311|        )\n312|    )\n313|\n314|    REM Core .py files in the backend root\n315|    for %%f in (server.py config.py agent_loop.py circuit_breaker.py env_loader.py exceptions.py logging_config.py metrics.py protocols.py) do (\n316|        if exist \"%%f\" (\n317|            set \"ADD_DATA=!ADD_DATA! --add-data %%f;.\"\n318|        )\n319|    )\n320|\n321|    REM Assets and i18n directories\n322|    if exist \"assets\" set \"ADD_DATA=!ADD_DATA! --add-data assets;assets\"\n323|    if exist \"i18n\" set \"ADD_DATA=!ADD_DATA! --add-data i18n;i18n\"\n324|    if exist \"mcp_config.json\" set \"ADD_DATA=!ADD_DATA! --add-data mcp_config.json;.\"\n325|\n326|    echo   Files to bundle: !ADD_DATA!\n327|    echo.\n328|\n329|    REM ── Run PyInstaller ───────────────────────────────────────\n330|    pyinstaller --onefile ^\n331|        --name \"backend\" ^\n332|        --noconfirm ^\n333|        --clean ^\n334|        --console ^\n335|        !ADD_DATA! ^\n336|        --hidden-import=uvicorn.logging ^\n337|        --hidden-import=uvicorn.loops ^\n338|        --hidden-import=uvicorn.loops.auto ^\n339|        --hidden-import=uvicorn.protocols ^\n340|        --hidden-import=uvicorn.protocols.http ^\n341|        --hidden-import=uvicorn.protocols.http.auto ^\n342|        --hidden-import=uvicorn.protocols.websockets ^\n343|        --hidden-import=uvicorn.protocols.websockets.auto ^\n344|        --hidden-import=uvicorn.lifespan ^\n345|        --hidden-import=uvicorn.lifespan.on ^\n346|        --hidden-import=anyio ^\n347|        --hidden-import=anyio._backends ^\n348|        --hidden-import=anyio._backends._asyncio ^\n349|        --hidden-import=httpx ^\n350|        --hidden-import=pydantic ^\n351|        --hidden-import=edge_tts ^\n352|        --hidden-import=websockets ^\n353|        --collect-all edge_tts ^\n354|        --collect-all httpx ^\n355|        \"%SIDECAR_ENTRY%\"\n356|\n357|    if %errorlevel% neq 0 (\n358|        popd\n359|        echo   ERROR: PyInstaller build failed\n360|        echo.\n361|        echo   Common fixes:\n362|        echo     1. pip install fastapi uvicorn pydantic httpx edge-tts\n363|        echo     2. Check %BACKEND_DIR% has server.py, agentmain/, llmcore/\n364|        echo     3. Try: --skip-sidecar to build without backend\n365|        pause\n366|        exit /b 1\n367|    )\n368|\n369|    REM Copy sidecar to Tauri binaries directory\n370|    if not exist \"%BINARIES_DIR%\" mkdir \"%BINARIES_DIR%\"\n371|    copy /y \"dist\\backend.exe\" \"%BINARIES_DIR%\\backend-x86_64-pc-windows-msvc.exe\" >nul\n372|    if %errorlevel% neq 0 (\n373|        popd\n374|        echo   ERROR: Failed to copy backend.exe to binaries dir\n375|        pause\n376|        exit /b 1\n377|    )\n378|\n379|    popd\n380|\n381|    REM Verify\n382|    if exist \"%BINARIES_DIR%\\backend-x86_64-pc-windows-msvc.exe\" (\n383|        for %%f in (\"%BINARIES_DIR%\\backend-x86_64-pc-windows-msvc.exe\") do echo   OK: Sidecar built ^(%%~zf bytes^)\n384|    ) else (\n385|        echo   ERROR: Sidecar binary not found after build\n386|        pause\n387|        exit /b 1\n388|    )\n389|    echo.\n390|)\n391|\n392|REM ═══════════════════════════════════════════════════════════════\n393|REM [4/5] Build Tauri desktop app\n394|REM ═══════════════════════════════════════════════════════════════\n395|if \"%SKIP_TAURI%\"==\"1\" (\n396|    echo [4/5] Skipping Tauri build ^(--skip-tauri^)\n397|    echo.\n398|    goto :collect_output\n399|)\n400|\n401|if \"%DEV_MODE%\"==\"1\" (\n402|    echo [4/5] Starting Tauri in DEV mode...\n403|    call npx tauri dev\n404|    goto :eof\n405|)\n406|\n407|echo [4/5] Building Tauri desktop app...\n408|echo   This may take 5-15 minutes on first build...\n409|echo.\n410|\n411|REM Ensure Rust target is installed\n412|rustup target add x86_64-pc-windows-msvc >nul 2>&1\n413|\n414|REM IMPORTANT: beforeBuildCommand is empty in tauri.conf.json\n415|REM Frontend is already built in step [2/5].\n416|call npx tauri build\n417|if %errorlevel% neq 0 (\n418|    echo.\n419|    echo   ERROR: Tauri build failed\n420|    echo.\n421|    echo   Common fixes:\n422|    echo     1. Install Rust: https://rustup.rs\n423|    echo     2. Install VS Build Tools with \"Desktop C++\"\n424|    echo     3. Make sure out\\ directory exists\n425|    echo     4. Check src-tauri\\tauri.conf.json\n426|    echo.\n427|    pause\n428|    exit /b 1\n429|)\n430|echo   OK: Tauri app built\n431|echo.\n432|\n433|REM ═══════════════════════════════════════════════════════════════\n434|REM [5/5] Collect output files\n435|REM ═══════════════════════════════════════════════════════════════\n436|:collect_output\n437|echo [5/5] Collecting output files...\n438|\n439|if not exist \"%DIST_DIR%\" mkdir \"%DIST_DIR%\"\n440|\n441|set \"FOUND_OUTPUT=0\"\n442|\n443|REM Copy NSIS installer\n444|for %%f in (\"src-tauri\\target\\release\\bundle\\nsis\\*.exe\") do (\n445|    copy /y \"%%f\" \"%DIST_DIR%\\\" >nul\n446|    echo   OK: %%~nxf\n447|    set \"FOUND_OUTPUT=1\"\n448|)\n449|\n450|REM Copy MSI installer\n451|for %%f in (\"src-tauri\\target\\release\\bundle\\msi\\*.msi\") do (\n452|    copy /y \"%%f\" \"%DIST_DIR%\\\" >nul\n453|    echo   OK: %%~nxf\n454|    set \"FOUND_OUTPUT=1\"\n455|)\n456|\n457|REM Copy portable exe\n458|if exist \"src-tauri\\target\\release\\GenericAgent.exe\" (\n459|    copy /y \"src-tauri\\target\\release\\GenericAgent.exe\" \"%DIST_DIR%\\\" >nul\n460|    echo   OK: GenericAgent.exe ^(portable^)\n461|    set \"FOUND_OUTPUT=1\"\n462|)\n463|\n464|REM ALSO copy to project root for easy access\n465|if exist \"src-tauri\\target\\release\\GenericAgent.exe\" (\n466|    copy /y \"src-tauri\\target\\release\\GenericAgent.exe\" \"%PROJECT_DIR%\\GenericAgent.exe\" >nul\n467|    echo   OK: GenericAgent.exe copied to project root\n468|)\n469|\n470|if \"%FOUND_OUTPUT%\"==\"0\" (\n471|    echo   WARNING: No output files found!\n472|    echo   Check src-tauri\\target\\release\\bundle\\ for build results\n473|)\n474|\n475|echo.\n476|\n477|REM ─── Summary ─────────────────────────────────────────────────\n478|echo ================================================================\n479|echo   BUILD COMPLETE!\n480|echo.\n481|echo   Output: %DIST_DIR%\\\n482|echo.\n483|\n484|for %%f in (\"%DIST_DIR%\\*.exe\") do echo   %%~nxf  ^(%%~zf bytes^)\n485|for %%f in (\"%DIST_DIR%\\*.msi\") do echo   %%~nxf  ^(%%~zf bytes^)\n486|\n487|echo.\n488|echo   HOW TO RUN THE APP:\n489|echo.\n490|echo   Option 1 - NSIS Installer ^(recommended^):\n491|echo     1. Double-click: %DIST_DIR%\\GenericAgent_xxx_x64-setup.exe\n492|echo     2. Follow the installation wizard\n493|echo     3. Find \"GenericAgent\" in your Start Menu or Desktop\n494|echo.\n495|echo   Option 2 - Portable EXE:\n496|echo     1. Double-click: %PROJECT_DIR%\\GenericAgent.exe\n497|echo     2. Or run in PowerShell: .\\GenericAgent.exe\n498|echo        (NOTE: PowerShell requires .\\ prefix!)\n499|echo.\n500|echo   Option 3 - Debug mode:\n501|echo     1. Run: scripts\\debug-launch.bat\n502|echo     2. This shows console output for troubleshooting\n503|echo.\n504|echo   NOTE: The backend sidecar starts automatically when the\n505|echo         app launches. Wait 3-5 seconds for it to initialize.\n506|echo.\n507|echo   TROUBLESHOOTING:\n508|echo     - App doesn't open? Run: scripts\\debug-launch.bat\n509|echo     - Check logs at: %%APPDATA%%\\com.genericagent.desktop\\logs\\\n510|echo     - Missing WebView2? Install from: https://developer.microsoft.com/microsoft-edge/webview2/\n511|echo ================================================================\n512|echo.\n513|pause\n514|goto :eof\n515|\n516|REM ─── Help ────────────────────────────────────────────────────\n517|:show_help\n518|echo Usage: scripts\\build-exe.bat [OPTIONS]\n519|echo.\n520|echo Options:\n521|echo   --skip-sidecar    Skip PyInstaller sidecar build\n522|echo   --skip-frontend   Skip Next.js frontend build\n523|echo   --skip-tauri      Skip Tauri build (sidecar only)\n524|echo   --dev             Start Tauri in dev mode instead of building\n525|echo   --clean           Remove build artifacts before building\n526|echo   --help            Show this help message\n527|echo.\n528|echo Note: Script auto-detects the project root directory.\n529|echo.\n530|goto :eof\n531|"
+          }
+        }
+      ],
+      "id": "b56c9f70-a989-42c9-b102-c54a106eb75f",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "I see the build script. It looks good but I notice a few issues:\n\n1. The script refers to \"GenericAgent\" but we've renamed the project to \"Shadow Agent\"\n2. The script copies the output to GenericAgent.exe instead of ShadowAgent.exe\n3. The app identifier in the troubleshooting section still says \"com.genericagent.desktop\"\n\nLet me update the script to use the correct name \"Shadow Agent\"."
+        },
+        {
+          "type": "text",
+          "text": "Je vois le script. Il y a quelques références à \"GenericAgent\" qu'il faut mettre à jour vers \"Shadow Agent\". Laissez-moi corriger cela :\n"
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_x0ux5g6dbasq_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "scripts\\build-exe.bat",
+            "searchTerm": "@echo off\nsetlocal enabledelayedexpansion\nREM ═══════════════════════════════════════════════════════════════\nREM GenericAgent — Windows Desktop Build Script (v6)\nREM\nREM Changes from v5:\nREM   - Auto-detect backend dir (upload\\GenericAgent-v1.2.0 OR backend\\)\nREM   - Copy final exe to project root for easy access\nREM   - Show clear instructions after build\nREM   - Add --skip-tauri flag for sidecar-only build\nREM   - Better error messages for common issues\nREM\nREM Usage:\nREM   scripts\\build-exe.bat                    # Build complet\nREM   scripts\\build-exe.bat --skip-sidecar     # Skip PyInstaller\nREM   scripts\\build-exe.bat --skip-frontend  # Skip Next.js build\nREM   scripts\\build-exe.bat --skip-tauri      # Skip Tauri (sidecar only)\nREM   scripts\\build-exe.bat --dev              # Mode developpement\nREM   scripts\\build-exe.bat --clean            # Nettoyer avant build\nREM ═══════════════════════════════════════════════════════════════\n\necho.\necho ================================================================\necho   GenericAgent - Windows Desktop Builder v6\necho ================================================================\necho.",
+            "replacementText": "@echo off\nsetlocal enabledelayedexpansion\nREM ═══════════════════════════════════════════════════════════════\nREM Shadow Agent — Windows Desktop Build Script (v1.2.0)\nREM\nREM Changes from v6:\nREM   - Renamed to Shadow Agent\nREM   - Auto-detect backend dir (upload\\GenericAgent-v1.0.0 OR backend\\)\nREM   - Copy final exe to project root for easy access\nREM   - Show clear instructions after build\nREM   - Add --skip-tauri flag for sidecar-only build\nREM   - Better error messages for common issues\nREM\nREM Usage:\nREM   scripts\\build-exe.bat                    # Build complet\nREM   scripts\\build-exe.bat --skip-sidecar     # Skip PyInstaller\nREM   scripts\\build-exe.bat --skip-frontend   # Skip Next.js build\nREM   scripts\\build-exe.bat --skip-tauri       # Skip Tauri (sidecar only)\nREM   scripts\\build-exe.bat --dev              # Mode developpement\nREM   scripts\\build-exe.bat --clean           # Nettoyer avant build\nREM ═══════════════════════════════════════════════════════════════\n\necho.\necho ================================================================\necho   Shadow Agent - Windows Desktop Builder v1.2.0\necho ================================================================\necho.",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "52fd1d95-26ef-489c-8080-370dd2c8edaf",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 6383,
+        "receivedTokens": 733,
+        "cacheReadTokens": 167547,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_x0ux5g6dbasq_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Warning: Given 'searchTerm' was not found in the file. Content remains the same. When you try again make sure to exactly match content, character for character, including all comments, docstrings, etc."
+          }
+        }
+      ],
+      "id": "66917fb5-da8f-41a3-a656-70bf06389333",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "The edit didn't work. Let me try a smaller search term that should match exactly."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_u37otzubn5bp_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "scripts\\build-exe.bat",
+            "searchTerm": "REM ═══════════════════════════════════════════════════════════════\nREM GenericAgent — Windows Desktop Build Script (v6)\nREM\nREM Changes from v5:\nREM   - Auto-detect backend dir (upload\\GenericAgent-v1.2.0 OR backend\\)\nREM   - Copy final exe to project root for easy access\nREM   - Show clear instructions after build\nREM   - Add --skip-tauri flag for sidecar-only build\nREM   - Better error messages for common issues",
+            "replacementText": "REM ═══════════════════════════════════════════════════════════════\nREM Shadow Agent — Windows Desktop Build Script (v1.2.0)\nREM\nREM Changes from v6:\nREM   - Renamed to Shadow Agent\nREM   - Auto-detect backend dir (upload\\GenericAgent-v1.0.0 OR backend\\)\nREM   - Copy final exe to project root for easy access\nREM   - Show clear instructions after build\nREM   - Add --skip-tauri flag for sidecar-only build\nREM   - Better error messages for common issues",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "12755803-0f7a-4a38-83ea-149198763ca4",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 454,
+        "receivedTokens": 310,
+        "cacheReadTokens": 174267,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_u37otzubn5bp_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'scripts\\build-exe.bat'."
+          }
+        }
+      ],
+      "id": "7fd7453a-8bca-4c5c-9179-b5381dac1b6d",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now let me update the \"GenericAgent\" header and error messages throughout the script."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_iwbfpny84pv3_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "scripts\\build-exe.bat",
+            "searchTerm": "echo ================================================================\necho   GenericAgent - Windows Desktop Builder v6\necho ================================================================",
+            "replacementText": "echo ================================================================\necho   Shadow Agent - Windows Desktop Builder v1.2.0\necho ================================================================",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "134440ca-9685-4e38-a01d-d906a4d76ff2",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 342,
+        "receivedTokens": 139,
+        "cacheReadTokens": 174715,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_iwbfpny84pv3_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'scripts\\build-exe.bat'."
+          }
+        }
+      ],
+      "id": "9e96975c-97cb-41b9-b6c9-3c74314f78d3",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now let me update the error message about not finding the project root."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_l5u9trrdl129_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "scripts\\build-exe.bat",
+            "searchTerm": "echo   ERROR: Cannot find GenericAgent project root!\necho.\necho   Could not find package.json and src-tauri/ in:\necho     Current dir:  %cd%\necho     Script dir:   %SCRIPT_DIR%\necho.\necho   Please cd to the project folder first:\necho     cd /d \"%USERPROFILE%\\Downloads\\GenericAgent-Desktop-v1.2.0\"\necho     scripts\\build-exe.bat",
+            "replacementText": "echo   ERROR: Cannot find Shadow Agent project root!\necho.\necho   Could not find package.json and src-tauri/ in:\necho     Current dir:  %cd%\necho     Script dir:   %SCRIPT_DIR%\necho.\necho   Please cd to the project folder first:\necho     cd /d \"%USERPROFILE%\\Downloads\\ShadowAgent\"\necho     scripts\\build-exe.bat",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "83691907-a9e3-42f8-b80e-9e951052829f",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 31,
+        "receivedTokens": 266,
+        "cacheReadTokens": 175191,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_l5u9trrdl129_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'scripts\\build-exe.bat'."
+          }
+        }
+      ],
+      "id": "119b7c8b-32ca-4d33-86ba-77122b109a9f",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now let me update the troubleshooting section at the end of the script."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_x7pnne0hoqpm_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "scripts\\build-exe.bat",
+            "searchTerm": "echo ================================================================\necho   BUILD COMPLETE!\necho.\necho   Output: %DIST_DIR%\\\necho.\n\nfor %%f in (\"%DIST_DIR%\\*.exe\") do echo   %%~nxf  ^(%%~zf bytes^)\nfor %%f in (\"%DIST_DIR%\\*.msi\") do echo   %%~nxf  ^(%%~zf bytes^)\n\necho.\necho   HOW TO RUN THE APP:\necho.\necho   Option 1 - NSIS Installer ^(recommended^):\necho     1. Double-click: %DIST_DIR%\\GenericAgent_xxx_x64-setup.exe\necho     2. Follow the installation wizard\necho     3. Find \"GenericAgent\" in your Start Menu or Desktop\necho.\necho   Option 2 - Portable EXE:\necho     1. Double-click: %PROJECT_DIR%\\GenericAgent.exe\necho     2. Or run in PowerShell: .\\GenericAgent.exe\necho        (NOTE: PowerShell requires .\\ prefix!)\necho.\necho   Option 3 - Debug mode:\necho     1. Run: scripts\\debug-launch.bat\necho     2. This shows console output for troubleshooting\necho.\necho   NOTE: The backend sidecar starts automatically when the\necho         app launches. Wait 3-5 seconds for it to initialize.\necho.\necho   TROUBLESHOOTING:\necho     - App doesn't open? Run: scripts\\debug-launch.bat\necho     - Check logs at: %%APPDATA%%\\com.genericagent.desktop\\logs\\\necho     - Missing WebView2? Install from: https://developer.microsoft.com/microsoft-edge/webview2/\necho ================================================================",
+            "replacementText": "echo ================================================================\necho   BUILD COMPLETE!\necho.\necho   Output: %DIST_DIR%\\\necho.\n\nfor %%f in (\"%DIST_DIR%\\*.exe\") do echo   %%~nxf  ^(%%~zf bytes^)\nfor %%f in (\"%DIST_DIR%\\*.msi\") do echo   %%~nxf  ^(%%~zf bytes^)\n\necho.\necho   HOW TO RUN THE APP:\necho.\necho   Option 1 - NSIS Installer ^(recommended^):\necho     1. Double-click: %DIST_DIR%\\ShadowAgent_xxx_x64-setup.exe\necho     2. Follow the installation wizard\necho     3. Find \"Shadow Agent\" in your Start Menu or Desktop\necho.\necho   Option 2 - Portable EXE:\necho     1. Double-click: %PROJECT_DIR%\\ShadowAgent.exe\necho     2. Or run in PowerShell: .\\ShadowAgent.exe\necho        (NOTE: PowerShell requires .\\ prefix!)\necho.\necho   Option 3 - Debug mode:\necho     1. Run: scripts\\debug-launch.bat\necho     2. This shows console output for troubleshooting\necho.\necho   NOTE: The backend sidecar starts automatically when the\necho         app launches. Wait 3-5 seconds for it to initialize.\necho.\necho   TROUBLESHOOTING:\necho     - App doesn't open? Run: scripts\\debug-launch.bat\necho     - Check logs at: %%APPDATA%%\\com.shadowagent.desktop\\logs\\\necho     - Missing WebView2? Install from: https://developer.microsoft.com/microsoft-edge/webview2/\necho ================================================================",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "9ef4bded-d375-4363-8082-4d1356156d0b",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 323,
+        "receivedTokens": 796,
+        "cacheReadTokens": 175191,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_x7pnne0hoqpm_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'scripts\\build-exe.bat'."
+          }
+        }
+      ],
+      "id": "719a9626-d287-44e0-a580-d31bb98baeed",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now let me update the portable exe copy section which still uses GenericAgent."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_7hc19q1tc8b8_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "scripts\\build-exe.bat",
+            "searchTerm": "REM Copy portable exe\nif exist \"src-tauri\\target\\release\\GenericAgent.exe\" (\n    copy /y \"src-tauri\\target\\release\\GenericAgent.exe\" \"%DIST_DIR%\\\" >nul\n    echo   OK: GenericAgent.exe ^(portable^)\n    set \"FOUND_OUTPUT=1\"\n)\n\nREM ALSO copy to project root for easy access\nif exist \"src-tauri\\target\\release\\GenericAgent.exe\" (\n    copy /y \"src-tauri\\target\\release\\GenericAgent.exe\" \"%PROJECT_DIR%\\GenericAgent.exe\" >nul\n    echo   OK: GenericAgent.exe copied to project root\n)",
+            "replacementText": "REM Copy portable exe\nif exist \"src-tauri\\target\\release\\ShadowAgent.exe\" (\n    copy /y \"src-tauri\\target\\release\\ShadowAgent.exe\" \"%DIST_DIR%\\\" >nul\n    echo   OK: ShadowAgent.exe ^(portable^)\n    set \"FOUND_OUTPUT=1\"\n)\n\nREM ALSO copy to project root for easy access\nif exist \"src-tauri\\target\\release\\ShadowAgent.exe\" (\n    copy /y \"src-tauri\\target\\release\\ShadowAgent.exe\" \"%PROJECT_DIR%\\ShadowAgent.exe\" >nul\n    echo   OK: ShadowAgent.exe copied to project root\n)",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "c259bd03-0817-48f5-a1fc-7387c576438e",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 277,
+        "receivedTokens": 373,
+        "cacheReadTokens": 176059,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_7hc19q1tc8b8_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'scripts\\build-exe.bat'."
+          }
+        }
+      ],
+      "id": "eecebbdc-0852-4572-88c8-233d96e1a63d",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now I need to update the Tauri config to produce ShadowAgent.exe instead of the default name. Let me also check if there are any other scripts that need to be updated."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_dumwuvoz05lx_1",
+          "toolName": "power---glob",
+          "input": {
+            "pattern": "scripts/*.bat"
+          }
+        }
+      ],
+      "id": "699e1d14-5a8f-4324-97a9-0adcec2b2ec1",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 228,
+        "receivedTokens": 68,
+        "cacheReadTokens": 176507,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_dumwuvoz05lx_1",
+          "toolName": "power---glob",
+          "output": {
+            "type": "json",
+            "value": [
+              "scripts\\debug-launch.bat",
+              "scripts\\check-prerequisites.bat",
+              "scripts\\build-sidecar.bat",
+              "scripts\\build-exe.bat"
+            ]
+          }
+        }
+      ],
+      "id": "2ff3054b-4e2e-4ad6-bb38-cc4260e0cdcc",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Let me check and update the debug-launch.bat script as well."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_ws1uwcnaammb_1",
+          "toolName": "power---file_read",
+          "input": {
+            "filePath": "scripts\\debug-launch.bat",
+            "withLines": true,
+            "lineOffset": 0,
+            "lineLimit": 200
+          }
+        }
+      ],
+      "id": "aaf64455-3879-4e83-ba42-2e6f6a3883f4",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 340,
+        "receivedTokens": 80,
+        "cacheReadTokens": 176507,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_ws1uwcnaammb_1",
+          "toolName": "power---file_read",
+          "output": {
+            "type": "text",
+            "value": "1|@echo off\n2|REM ═══════════════════════════════════════════════════════════════\n3|REM GenericAgent — Debug Launch Script\n4|REM\n5|REM This script launches GenericAgent with full console output\n6|REM visible, making it easy to diagnose startup issues.\n7|REM\n8|REM Usage:  scripts\\debug-launch.bat\n9|REM ═══════════════════════════════════════════════════════════════\n10|\n11|echo.\n12|echo ================================================================\n13|echo   GenericAgent - Debug Launch\n14|echo ================================================================\n15|echo.\n16|\n17|REM ─── Find the project root ───────────────────────────────────\n18|set \"SCRIPT_DIR=%~dp0\"\n19|set \"PROJECT_DIR=\"\n20|\n21|if exist \"package.json\" if exist \"src-tauri\" (\n22|    set \"PROJECT_DIR=%cd%\"\n23|    goto :found\n24|)\n25|if exist \"%SCRIPT_DIR%..\\package.json\" if exist \"%SCRIPT_DIR%..\\src-tauri\" (\n26|    set \"PROJECT_DIR=%SCRIPT_DIR%..\"\n27|    goto :found\n28|)\n29|\n30|echo ERROR: Cannot find GenericAgent project root!\n31|echo Please run this script from the project directory.\n32|pause\n33|exit /b 1\n34|\n35|:found\n36|pushd \"%PROJECT_DIR%\"\n37|set \"PROJECT_DIR=%cd%\"\n38|popd\n39|\n40|cd /d \"%PROJECT_DIR%\"\n41|\n42|echo   Project: %PROJECT_DIR%\n43|echo.\n44|\n45|REM ─── Check if the exe exists ────────────────────────────────\n46|set \"EXE_PATH=\"\n47|\n48|if exist \"%PROJECT_DIR%\\GenericAgent.exe\" (\n49|    set \"EXE_PATH=%PROJECT_DIR%\\GenericAgent.exe\"\n50|    echo   [OK] Found: GenericAgent.exe ^(project root^)\n51|) else if exist \"%PROJECT_DIR%\\dist\\GenericAgent.exe\" (\n52|    set \"EXE_PATH=%PROJECT_DIR%\\dist\\GenericAgent.exe\"\n53|    echo   [OK] Found: dist\\GenericAgent.exe\n54|) else if exist \"%PROJECT_DIR%\\src-tauri\\target\\release\\GenericAgent.exe\" (\n55|    set \"EXE_PATH=%PROJECT_DIR%\\src-tauri\\target\\release\\GenericAgent.exe\"\n56|    echo   [OK] Found: src-tauri\\target\\release\\GenericAgent.exe\n57|) else (\n58|    echo   [ERROR] GenericAgent.exe not found!\n59|    echo.\n60|    echo   Have you built the app yet? Run: scripts\\build-exe.bat\n61|    echo.\n62|    pause\n63|    exit /b 1\n64|)\n65|\n66|REM ─── Check WebView2 ─────────────────────────────────────────\n67|echo.\n68|echo   Checking WebView2...\n69|where /r \"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\" WebView2Loader.dll >nul 2>&1\n70|if %errorlevel% equ 0 (\n71|    echo   [OK] WebView2 runtime found\n72|) else (\n73|    where /r \"C:\\Program Files\\Microsoft\\EdgeWebView\" WebView2Loader.dll >nul 2>&1\n74|    if %errorlevel% equ 0 (\n75|        echo   [OK] WebView2 runtime found\n76|    ) else (\n77|        echo   [WARNING] WebView2 may not be installed!\n78|        echo   If the app doesn't open, install WebView2 from:\n79|        echo   https://developer.microsoft.com/microsoft-edge/webview2/\n80|        echo.\n81|    )\n82|)\n83|\n84|REM ─── Check sidecar ──────────────────────────────────────────\n85|echo   Checking sidecar...\n86|if exist \"%PROJECT_DIR%\\src-tauri\\binaries\\backend-x86_64-pc-windows-msvc.exe\" (\n87|    for %%f in (\"%PROJECT_DIR%\\src-tauri\\binaries\\backend-x86_64-pc-windows-msvc.exe\") do (\n88|        echo   [OK] Sidecar found ^(%%~zf bytes^)\n89|    )\n90|) else (\n91|    echo   [WARNING] Sidecar not found - backend features won't work\n92|    echo   To build sidecar: Run scripts\\build-exe.bat ^(without --skip-sidecar^)\n93|)\n94|\n95|echo.\n96|echo ────────────────────────────────────────────────────────────────\n97|echo   Launching GenericAgent in DEBUG mode...\n98|echo   Console output will appear below.\n99|echo   If the app doesn't open, the error message will show here.\n100|echo.\n101|echo   Log files: %%APPDATA%%\\com.genericagent.desktop\\logs\\\n102|echo ────────────────────────────────────────────────────────────────\n103|echo.\n104|\n105|REM ─── Launch the app ─────────────────────────────────────────\n106|\"%EXE_PATH%\"\n107|\n108|set \"EXIT_CODE=%errorlevel%\"\n109|\n110|echo.\n111|echo ────────────────────────────────────────────────────────────────\n112|if %EXIT_CODE% equ 0 (\n113|    echo   App exited normally.\n114|) else (\n115|    echo   App exited with error code: %EXIT_CODE%\n116|    echo.\n117|    echo   Check the log files at:\n118|    echo   %%APPDATA%%\\com.genericagent.desktop\\logs\\\n119|)\n120|echo ────────────────────────────────────────────────────────────────\n121|echo.\n122|pause\n123|"
+          }
+        }
+      ],
+      "id": "f76389b4-0eb5-4058-b17e-49cb11507f18",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "I need to update this file as well to use \"Shadow Agent\" instead of \"GenericAgent\". Let me update it."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_zntieivlvyx0_1",
+          "toolName": "power---file_write",
+          "input": {
+            "filePath": "scripts\\debug-launch.bat",
+            "content": "@echo off\nREM ═══════════════════════════════════════════════════════════════\nREM Shadow Agent — Debug Launch Script\nREM\nREM This script launches Shadow Agent with full console output\nREM visible, making it easy to diagnose startup issues.\nREM\nREM Usage:  scripts\\debug-launch.bat\nREM ═══════════════════════════════════════════════════════════════\n\necho.\necho ================================================================\necho   Shadow Agent - Debug Launch\necho ================================================================\necho.\n\nREM ─── Find the project root ───────────────────────────────────\nset \"SCRIPT_DIR=%~dp0\"\nset \"PROJECT_DIR=\"\n\nif exist \"package.json\" if exist \"src-tauri\" (\n    set \"PROJECT_DIR=%cd%\"\n    goto :found\n)\nif exist \"%SCRIPT_DIR%..\\package.json\" if exist \"%SCRIPT_DIR%..\\src-tauri\" (\n    set \"PROJECT_DIR=%SCRIPT_DIR%..\"\n    goto :found\n)\n\necho ERROR: Cannot find Shadow Agent project root!\necho Please run this script from the project directory.\npause\nexit /b 1\n\n:found\npushd \"%PROJECT_DIR%\"\nset \"PROJECT_DIR=%cd%\"\npopd\n\ncd /d \"%PROJECT_DIR%\"\n\necho   Project: %PROJECT_DIR%\necho.\n\nREM ─── Check if the exe exists ────────────────────────────────\nset \"EXE_PATH=\"\n\nif exist \"%PROJECT_DIR%\\ShadowAgent.exe\" (\n    set \"EXE_PATH=%PROJECT_DIR%\\ShadowAgent.exe\"\n    echo   [OK] Found: ShadowAgent.exe ^(project root^)\n) else if exist \"%PROJECT_DIR%\\dist\\ShadowAgent.exe\" (\n    set \"EXE_PATH=%PROJECT_DIR%\\dist\\ShadowAgent.exe\"\n    echo   [OK] Found: dist\\ShadowAgent.exe\n) else if exist \"%PROJECT_DIR%\\src-tauri\\target\\release\\ShadowAgent.exe\" (\n    set \"EXE_PATH=%PROJECT_DIR%\\src-tauri\\target\\release\\ShadowAgent.exe\"\n    echo   [OK] Found: src-tauri\\target\\release\\ShadowAgent.exe\n) else (\n    echo   [ERROR] ShadowAgent.exe not found!\n    echo.\n    echo   Have you built the app yet? Run: scripts\\build-exe.bat\n    echo.\n    pause\n    exit /b 1\n)\n\nREM ─── Check WebView2 ─────────────────────────────────────────\necho.\necho   Checking WebView2...\nwhere /r \"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\" WebView2Loader.dll >nul 2>&1\nif %errorlevel% equ 0 (\n    echo   [OK] WebView2 runtime found\n) else (\n    where /r \"C:\\Program Files\\Microsoft\\EdgeWebView\" WebView2Loader.dll >nul 2>&1\n    if %errorlevel% equ 0 (\n        echo   [OK] WebView2 runtime found\n    ) else (\n        echo   [WARNING] WebView2 may not be installed!\n        echo   If the app doesn't open, install WebView2 from:\n        echo   https://developer.microsoft.com/microsoft-edge/webview2/\n        echo.\n    )\n)\n\nREM ─── Check sidecar ──────────────────────────────────────────\necho   Checking sidecar...\nif exist \"%PROJECT_DIR%\\src-tauri\\binaries\\backend-x86_64-pc-windows-msvc.exe\" (\n    for %%f in (\"%PROJECT_DIR%\\src-tauri\\binaries\\backend-x86_64-pc-windows-msvc.exe\") do (\n        echo   [OK] Sidecar found ^(%%~zf bytes^)\n    )\n) else (\n    echo   [WARNING] Sidecar not found - backend features won't work\n    echo   To build sidecar: Run scripts\\build-exe.bat ^(without --skip-sidecar^)\n)\n\necho.\necho ────────────────────────────────────────────────────────────────\necho   Launching Shadow Agent in DEBUG mode...\necho   Console output will appear below.\necho   If the app doesn't open, the error message will show here.\necho.\necho   Log files: %%APPDATA%%\\com.shadowagent.desktop\\logs\\\necho ────────────────────────────────────────────────────────────────\necho.\n\nREM ─── Launch the app ─────────────────────────────────────────\n\"%EXE_PATH%\"\n\nset \"EXIT_CODE=%errorlevel%\"\n\necho.\necho ────────────────────────────────────────────────────────────────\nif %EXIT_CODE% equ 0 (\n    echo   App exited normally.\n) else (\n    echo   App exited with error code: %EXIT_CODE%\n    echo.\n    echo   Check the log files at:\n    echo   %%APPDATA%%\\com.shadowagent.desktop\\logs\\\n)\necho ────────────────────────────────────────────────────────────────\necho.\npause\n",
+            "mode": "overwrite"
+          }
+        }
+      ],
+      "id": "22f72155-67d2-4abe-90ac-661c0b029ace",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 4345,
+        "receivedTokens": 1060,
+        "cacheReadTokens": 173819,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_zntieivlvyx0_1",
+          "toolName": "power---file_write",
+          "output": {
+            "type": "text",
+            "value": "Successfully written to 'scripts\\debug-launch.bat' (overwritten)."
+          }
+        }
+      ],
+      "id": "1935d586-835c-4326-8daa-f1df986eb000",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now let me update the Tauri config to produce ShadowAgent.exe instead of the default name. I need to add the \"productName\" mapping for the binary output."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_s7bzlz2379i1_1",
+          "toolName": "power---file_read",
+          "input": {
+            "filePath": "src-tauri\\tauri.conf.json",
+            "withLines": true,
+            "lineOffset": 0,
+            "lineLimit": 100
+          }
+        }
+      ],
+      "id": "5d3d99ae-2aee-4f7c-9e84-afd03aa69bdd",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 58,
+        "receivedTokens": 106,
+        "cacheReadTokens": 179195,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_s7bzlz2379i1_1",
+          "toolName": "power---file_read",
+          "output": {
+            "type": "text",
+            "value": "1|{\n2|  \"$schema\": \"https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-config-schema/schema.json\",\n3|  \"productName\": \"Shadow Agent\",\n4|  \"version\": \"1.2.0\",\n5|  \"identifier\": \"com.shadowagent.desktop\",\n6|  \"build\": {\n7|    \"beforeDevCommand\": \"bun run dev\",\n8|    \"devUrl\": \"http://localhost:3000\",\n9|    \"beforeBuildCommand\": \"bun run build\",\n10|    \"frontendDist\": \"../out\"\n11|  },\n12|  \"app\": {\n13|    \"windows\": [\n14|      {\n15|        \"title\": \"Shadow Agent — Your AI Companion\",\n16|        \"width\": 1200,\n17|        \"height\": 800,\n18|        \"minWidth\": 800,\n19|        \"minHeight\": 600,\n20|        \"center\": true,\n21|        \"decorations\": true,\n22|        \"transparent\": false,\n23|        \"resizable\": true,\n24|        \"fullscreen\": false,\n25|        \"theme\": \"Dark\",\n26|        \"visible\": true\n27|      }\n28|    ],\n29|    \"security\": {\n30|      \"csp\": \"default-src 'self' http://localhost:* ws://localhost:* https:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' http://localhost:* ws://localhost:* https:; worker-src 'self' blob:\"\n31|    }\n32|  },\n33|  \"bundle\": {\n34|    \"active\": true,\n35|    \"targets\": [\"nsis\", \"msi\"],\n36|    \"icon\": [\n37|      \"icons/32x32.png\",\n38|      \"icons/128x128.png\",\n39|      \"icons/128x128@2x.png\",\n40|      \"icons/icon.icns\",\n41|      \"icons/icon.ico\"\n42|    ],\n43|    \"resources\": [\"binaries/*\"],\n44|    \"copyright\": \"Copyright 2025 Shadow Agent Team\",\n45|    \"category\": \"Productivity\",\n46|    \"shortDescription\": \"Shadow Agent — Your Self-Evolving AI Desktop Companion\",\n47|    \"longDescription\": \"Shadow Agent is your personal AI companion that thinks, learns, and evolves. It controls your computer with stunning reactivity and intelligence, packaged as a one-click downloadable desktop application.\",\n48|    \"windows\": {\n49|      \"digestAlgorithm\": \"sha256\",\n50|      \"webviewInstallMode\": {\n51|        \"type\": \"downloadBootstrapper\"\n52|      },\n53|      \"nsis\": {\n54|        \"displayLanguageSelector\": false,\n55|        \"installMode\": \"currentUser\",\n56|        \"languages\": [\"English\"],\n57|        \"compression\": \"lzma\"\n58|      }\n59|    }\n60|  }\n61|}\n62|"
+          }
+        }
+      ],
+      "id": "f1c00559-139c-404e-9267-eee4355f718a",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "The tauri.conf.json already has \"productName\": \"Shadow Agent\". But I need to also add a `bin` section to change the executable name from the default (which is based on the package name) to `ShadowAgent.exe`. Let me add that."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_8hy5nc14rgac_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "src-tauri\\tauri.conf.json",
+            "searchTerm": "{\n  \"$schema\": \"https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-config-schema/schema.json\",\n  \"productName\": \"Shadow Agent\",\n  \"version\": \"1.2.0\",\n  \"identifier\": \"com.shadowagent.desktop\",\n  \"build\": {\n    \"beforeDevCommand\": \"bun run dev\",\n    \"devUrl\": \"http://localhost:3000\",\n    \"beforeBuildCommand\": \"bun run build\",\n    \"frontendDist\": \"../out\"\n  },\n  \"app\": {\n    \"windows\": [\n      {\n        \"title\": \"Shadow Agent — Your AI Companion\",\n        \"width\": 1200,\n        \"height\": 800,\n        \"minWidth\": 800,\n        \"minHeight\": 600,\n        \"center\": true,\n        \"decorations\": true,\n        \"transparent\": false,\n        \"resizable\": true,\n        \"fullscreen\": false,\n        \"theme\": \"Dark\",\n        \"visible\": true\n      }\n    ],\n    \"security\": {\n      \"csp\": \"default-src 'self' http://localhost:* ws://localhost:* https:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' http://localhost:* ws://localhost:* https:; worker-src 'self' blob:\"\n    }\n  },\n  \"bundle\": {\n    \"active\": true,\n    \"targets\": [\"nsis\", \"msi\"],\n    \"icon\": [\n      \"icons/32x32.png\",\n      \"icons/128x128.png\",\n      \"icons/128x128@2x.png\",\n      \"icons/icon.icns\",\n      \"icons/icon.ico\"\n    ],\n    \"resources\": [\"binaries/*\"],\n    \"copyright\": \"Copyright 2025 Shadow Agent Team\",\n    \"category\": \"Productivity\",\n    \"shortDescription\": \"Shadow Agent — Your Self-Evolving AI Desktop Companion\",\n    \"longDescription\": \"Shadow Agent is your personal AI companion that thinks, learns, and evolves. It controls your computer with stunning reactivity and intelligence, packaged as a one-click downloadable desktop application.\",\n    \"windows\": {\n      \"digestAlgorithm\": \"sha256\",\n      \"webviewInstallMode\": {\n        \"type\": \"downloadBootstrapper\"\n      },\n      \"nsis\": {\n        \"displayLanguageSelector\": false,\n        \"installMode\": \"currentUser\",\n        \"languages\": [\"English\"],\n        \"compression\": \"lzma\"\n      }\n    }\n  }\n}",
+            "replacementText": "{\n  \"$schema\": \"https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-config-schema/schema.json\",\n  \"productName\": \"ShadowAgent\",\n  \"version\": \"1.2.0\",\n  \"identifier\": \"com.shadowagent.desktop\",\n  \"build\": {\n    \"beforeDevCommand\": \"bun run dev\",\n    \"devUrl\": \"http://localhost:3000\",\n    \"beforeBuildCommand\": \"bun run build\",\n    \"frontendDist\": \"../out\"\n  },\n  \"app\": {\n    \"windows\": [\n      {\n        \"title\": \"Shadow Agent — Your AI Companion\",\n        \"width\": 1200,\n        \"height\": 800,\n        \"minWidth\": 800,\n        \"minHeight\": 600,\n        \"center\": true,\n        \"decorations\": true,\n        \"transparent\": false,\n        \"resizable\": true,\n        \"fullscreen\": false,\n        \"theme\": \"Dark\",\n        \"visible\": true\n      }\n    ],\n    \"security\": {\n      \"csp\": \"default-src 'self' http://localhost:* ws://localhost:* https:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' http://localhost:* ws://localhost:* https:; worker-src 'self' blob:\"\n    }\n  },\n  \"bundle\": {\n    \"active\": true,\n    \"targets\": [\"nsis\", \"msi\"],\n    \"icon\": [\n      \"icons/32x32.png\",\n      \"icons/128x128.png\",\n      \"icons/128x128@2x.png\",\n      \"icons/icon.icns\",\n      \"icons/icon.ico\"\n    ],\n    \"resources\": [\"binaries/*\"],\n    \"copyright\": \"Copyright 2025 Shadow Agent Team\",\n    \"category\": \"Productivity\",\n    \"shortDescription\": \"Shadow Agent — Your Self-Evolving AI Desktop Companion\",\n    \"longDescription\": \"Shadow Agent is your personal AI companion that thinks, learns, and evolves. It controls your computer with stunning reactivity and intelligence, packaged as a one-click downloadable desktop application.\",\n    \"windows\": {\n      \"digestAlgorithm\": \"sha256\",\n      \"webviewInstallMode\": {\n        \"type\": \"downloadBootstrapper\"\n      },\n      \"nsis\": {\n        \"displayLanguageSelector\": false,\n        \"installMode\": \"currentUser\",\n        \"languages\": [\"English\"],\n        \"compression\": \"lzma\"\n      }\n    }\n  }\n}",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "6a4c073a-2da5-4e20-b9d9-4aa4c162784f",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 857,
+        "receivedTokens": 1240,
+        "cacheReadTokens": 179195,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_8hy5nc14rgac_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'src-tauri\\tauri.conf.json'."
+          }
+        }
+      ],
+      "id": "09adf57b-29a2-4f17-b17e-3ccbf8fa51ab",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now let me also update the Cargo.toml to make sure the package name is correct."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_7tls3vw2um47_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "src-tauri\\Cargo.toml",
+            "searchTerm": "[package]\nname = \"shadow-agent\"\nversion = \"1.2.0\"\ndescription = \"Shadow Agent — Your Self-Evolving AI Desktop Companion\"\nauthors = [\"Shadow Agent Team\"]\nedition = \"2021\"",
+            "replacementText": "[package]\nname = \"shadow-agent\"\nversion = \"1.2.0\"\ndescription = \"Shadow Agent — Your Self-Evolving AI Desktop Companion\"\nauthors = [\"Shadow Agent Team <team@shadowagent.dev>\"]\nedition = \"2021\"",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "56bc0c48-2cd5-4ad6-b1a9-4404f4e2f8e2",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 333,
+        "receivedTokens": 192,
+        "cacheReadTokens": 180987,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_7tls3vw2um47_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'src-tauri\\Cargo.toml'."
+          }
+        }
+      ],
+      "id": "6046aef6-8d8f-4c01-9f9b-1545b3a7efe3",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Now let me also update the check-prerequisites.bat and build-sidecar.bat files."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_oneub4s08bfx_1",
+          "toolName": "power---file_read",
+          "input": {
+            "filePath": "scripts\\check-prerequisites.bat",
+            "withLines": true,
+            "lineOffset": 0,
+            "lineLimit": 100
+          }
+        }
+      ],
+      "id": "afa3d969-10ad-4e90-8a0c-654284437cbe",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 103,
+        "receivedTokens": 85,
+        "cacheReadTokens": 181435,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_oneub4s08bfx_1",
+          "toolName": "power---file_read",
+          "output": {
+            "type": "text",
+            "value": "1|@echo off\n2|setlocal enabledelayedexpansion\n3|REM ═══════════════════════════════════════════════════════════════\n4|REM GenericAgent — Prerequisite Checker for Windows\n5|REM\n6|REM Works from ANY directory — auto-finds the project root.\n7|REM ═══════════════════════════════════════════════════════════════\n8|\n9|echo.\n10|echo ================================================================\n11|echo   GenericAgent - Windows Prerequisites Check\n12|echo ================================================================\n13|echo.\n14|\n15|REM ─── Auto-detect project root ─────────────────────────────────\n16|set \"SCRIPT_DIR=%~dp0\"\n17|set \"PROJECT_DIR=\"\n18|\n19|REM Method 1: Check current directory\n20|if exist \"package.json\" if exist \"src\\app\" (\n21|    set \"PROJECT_DIR=%cd%\"\n22|    goto :found_root\n23|)\n24|\n25|REM Method 2: Check relative to script (scripts/ subdirectory)\n26|if exist \"%SCRIPT_DIR%..\\package.json\" if exist \"%SCRIPT_DIR%..\\src\\app\" (\n27|    set \"PROJECT_DIR=%SCRIPT_DIR%..\"\n28|    goto :found_root\n29|)\n30|\n31|REM Method 3: Look for package.json with src-tauri\n32|if exist \"package.json\" if exist \"src-tauri\" (\n33|    set \"PROJECT_DIR=%cd%\"\n34|    goto :found_root\n35|)\n36|\n37|REM Method 4: Parent of script dir\n38|if exist \"%SCRIPT_DIR%..\\package.json\" if exist \"%SCRIPT_DIR%..\\src-tauri\" (\n39|    set \"PROJECT_DIR=%SCRIPT_DIR%..\"\n40|    goto :found_root\n41|)\n42|\n43|echo   ERROR: Cannot find GenericAgent project root!\n44|echo.\n45|echo   Make sure you are in the project folder that contains:\n46|echo     - package.json\n47|echo     - src\\app\\\n48|echo     - src-tauri\\\n49|echo.\n50|echo   Try:\n51|echo     cd /d \"%USERPROFILE%\\Downloads\\GenericAgent-Desktop-v1.2.0\"\n52|echo     scripts\\check-prerequisites.bat\n53|echo.\n54|pause\n55|exit /b 1\n56|\n57|:found_root\n58|REM Convert to absolute path\n59|pushd \"%PROJECT_DIR%\"\n60|set \"PROJECT_DIR=%cd%\"\n61|popd\n62|\n63|echo   Project found: %PROJECT_DIR%\n64|echo.\n65|\n66|set \"ALL_OK=1\"\n67|\n68|REM ─── Rust ───────────────────────────────────────────────────\n69|echo [Checking Rust...]\n70|where rustc >nul 2>&1\n71|if %errorlevel% neq 0 (\n72|    echo   [MISSING] Rust not found\n73|    echo   Install: https://rustup.rs\n74|    echo   Command: winget install Rustlang.Rustup\n75|    set \"ALL_OK=0\"\n76|) else (\n77|    for /f \"tokens=*\" %%v in ('rustc --version 2^>nul') do echo   [OK] %%v\n78|)\n79|\n80|where cargo >nul 2>&1\n81|if %errorlevel% neq 0 (\n82|    echo   [MISSING] Cargo not found\n83|    echo   Install Rust from https://rustup.rs\n84|    set \"ALL_OK=0\"\n85|) else (\n86|    for /f \"tokens=*\" %%v in ('cargo --version 2^>nul') do echo   [OK] %%v\n87|)\n88|\n89|echo.\n90|\n91|REM ─── Node.js & Bun ──────────────────────────────────────────\n92|echo [Checking Node.js & Bun...]\n93|where node >nul 2>&1\n94|if %errorlevel% neq 0 (\n95|    echo   [MISSING] Node.js not found\n96|    echo   Install: https://nodejs.org\n97|    echo   Command: winget install OpenJS.NodeJS.LTS\n98|    set \"ALL_OK=0\"\n99|) else (\n100|    for /f \"tokens=*\" %%v in ('node --version 2^>nul') do echo   [OK] node %%v\n101|)\n102|\n103|where bun >nul 2>&1\n104|if %errorlevel% neq 0 (\n105|    echo   [MISSING] Bun not found\n106|    echo   Install: https://bun.sh\n107|    echo   Command: powershell -c \"irm bun.sh/install.ps1 ^| iex\"\n108|    set \"ALL_OK=0\"\n109|) else (\n110|    for /f \"tokens=*\" %%v in ('bun --version 2^>nul') do echo   [OK] bun %%v\n111|)\n112|\n113|echo.\n114|\n115|REM ─── Python ──────────────────────────────────────────────────\n116|echo [Checking Python...]\n117|where python >nul 2>&1\n118|if %errorlevel% neq 0 (\n119|    echo   [MISSING] Python not found\n120|    echo   Install: https://python.org\n121|    echo   Command: winget install Python.Python.3.12\n122|    echo   IMPORTANT: Check \"Add Python to PATH\" during install!\n123|    set \"ALL_OK=0\"\n124|) else (\n125|    for /f \"tokens=*\" %%v in ('python --version 2^>nul') do echo   [OK] %%v\n126|    python -c \"import sys; exit(0 if sys.version_info >= (3, 10) else 1)\" 2>nul\n127|    if %errorlevel% neq 0 (\n128|        echo   [WARN] Python 3.10+ required, found older version\n129|        set \"ALL_OK=0\"\n130|    )\n131|)\n132|\n133|where pip >nul 2>&1\n134|if %errorlevel% neq 0 (\n135|    echo   [MISSING] pip not found\n136|    echo   Install: python -m ensurepip\n137|    set \"ALL_OK=0\"\n138|) else (\n139|    for /f \"tokens=*\" %%v in ('pip --version 2^>nul') do echo   [OK] %%v\n140|)\n141|\n142|where pyinstaller >nul 2>&1\n143|if %errorlevel% neq 0 (\n144|    echo   [MISSING] PyInstaller not found\n145|    echo   Install: pip install pyinstaller\n146|    set \"ALL_OK=0\"\n147|) else (\n148|    for /f \"tokens=*\" %%v in ('pyinstaller --version 2^>nul') do echo   [OK] PyInstaller %%v\n149|)\n150|\n151|echo.\n152|\n153|REM ─── Visual Studio Build Tools ───────────────────────────────\n154|echo [Checking Visual Studio Build Tools...]\n155|set \"VS_FOUND=0\"\n156|if exist \"C:\\Program Files\\Microsoft Visual Studio\\2022\\BuildTools\" set \"VS_FOUND=1\"\n157|if exist \"C:\\Program Files\\Mic\n\nFile size limit (5.0 KB) exceeded. Use shell commands (e.g., head, tail, grep) to read specific parts."
+          }
+        }
+      ],
+      "id": "f47ee185-90a2-4c8c-a437-80963de09068",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Let me update this script as well to rename GenericAgent to Shadow Agent."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_op1kj3hu25uz_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "scripts\\check-prerequisites.bat",
+            "searchTerm": "REM ═══════════════════════════════════════════════════════════════\nREM GenericAgent — Prerequisite Checker for Windows\nREM\nREM Works from ANY directory — auto-finds the project root.\nREM ═══════════════════════════════════════════════════════════════\n\necho.\necho ================================================================\necho   GenericAgent - Windows Prerequisites Check\necho ================================================================",
+            "replacementText": "REM ═══════════════════════════════════════════════════════════════\nREM Shadow Agent — Prerequisite Checker for Windows\nREM\nREM Works from ANY directory — auto-finds the project root.\nREM ═══════════════════════════════════════════════════════════════\n\necho.\necho ================================================================\necho   Shadow Agent - Windows Prerequisites Check\necho ================================================================",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "ebffa692-95a0-41aa-9cf1-4e7598fcdea8",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 5443,
+        "receivedTokens": 233,
+        "cacheReadTokens": 177851,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_op1kj3hu25uz_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'scripts\\check-prerequisites.bat'."
+          }
+        }
+      ],
+      "id": "c4667ea7-c191-430d-9521-2c83eb078b66",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Let me also update the error messages in this file."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_5gqgqi1by8v5_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "scripts\\check-prerequisites.bat",
+            "searchTerm": "echo   ERROR: Cannot find GenericAgent project root!\necho.\necho   Make sure you are in the project folder that contains:\necho     - package.json\necho     - src\\app\\\necho     - src-tauri\\\necho.\necho   Try:\necho     cd /d \"%USERPROFILE%\\Downloads\\GenericAgent-Desktop-v1.2.0\"\necho     scripts\\check-prerequisites.bat",
+            "replacementText": "echo   ERROR: Cannot find Shadow Agent project root!\necho.\necho   Make sure you are in the project folder that contains:\necho     - package.json\necho     - src\\app\\\necho     - src-tauri\\\necho.\necho   Try:\necho     cd /d \"%USERPROFILE%\\Downloads\\ShadowAgent\"\necho     scripts\\check-prerequisites.bat",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "d460a4cd-0d48-486c-9e83-f1fad4de89d5",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 326,
+        "receivedTokens": 249,
+        "cacheReadTokens": 183227,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_5gqgqi1by8v5_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'scripts\\check-prerequisites.bat'."
+          }
+        }
+      ],
+      "id": "94545eeb-dbbd-48e4-82e4-87fe8af0c503",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now let me check the build-sidecar.bat script."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_ri8xqkljrzz7_1",
+          "toolName": "power---file_read",
+          "input": {
+            "filePath": "scripts\\build-sidecar.bat",
+            "withLines": true,
+            "lineOffset": 0,
+            "lineLimit": 100
+          }
+        }
+      ],
+      "id": "528f2374-eff5-461d-aa9e-2678678a14fd",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 153,
+        "receivedTokens": 81,
+        "cacheReadTokens": 183675,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_ri8xqkljrzz7_1",
+          "toolName": "power---file_read",
+          "output": {
+            "type": "text",
+            "value": "1|@echo off\n2|setlocal enabledelayedexpansion\n3|REM ═══════════════════════════════════════════════════════════════\n4|REM GenericAgent — Build Sidecar Backend (Windows Batch Script v2)\n5|REM\n6|REM Packages the Python FastAPI backend as a standalone .exe using\n7|REM PyInstaller, then copies it to src-tauri/binaries/ with the\n8|REM correct Tauri target-triple naming convention.\n9|REM\n10|REM IMPORTANT: Run from project root!\n11|REM   cd C:\\path\\to\\GenericAgent-Desktop\n12|REM   scripts\\build-sidecar.bat\n13|REM\n14|REM Usage:\n15|REM   scripts\\build-sidecar.bat                  # Build for Windows\n16|REM   scripts\\build-sidecar.bat --clean          # Clean build artifacts first\n17|REM   scripts\\build-sidecar.bat --skip-deps      # Skip pip install\n18|REM ═══════════════════════════════════════════════════════════════\n19|\n20|echo.\n21|echo ================================================================\n22|echo   GenericAgent - Sidecar Backend Builder v2\n23|echo ================================================================\n24|echo.\n25|\n26|REM ─── Parse Arguments ─────────────────────────────────────────\n27|set \"CLEAN=0\"\n28|set \"SKIP_DEPS=0\"\n29|\n30|:parse_args\n31|if \"%~1\"==\"\" goto :done_parsing\n32|if /i \"%~1\"==\"--clean\" set \"CLEAN=1\"\n33|if /i \"%~1\"==\"--skip-deps\" set \"SKIP_DEPS=1\"\n34|if /i \"%~1\"==\"--help\" goto :show_help\n35|if /i \"%~1\"==\"-h\" goto :show_help\n36|shift\n37|goto :parse_args\n38|:done_parsing\n39|\n40|REM ─── Detect Project Root ─────────────────────────────────────\n41|set \"SCRIPT_DIR=%~dp0\"\n42|\n43|if exist \"package.json\" (\n44|    set \"PROJECT_DIR=%cd%\"\n45|) else if exist \"%SCRIPT_DIR%..\\package.json\" (\n46|    set \"PROJECT_DIR=%SCRIPT_DIR%..\"\n47|) else (\n48|    echo   ERROR: Cannot find project root ^(package.json not found^)\n49|    echo   Run this script from the project root directory.\n50|    goto :error_exit\n51|)\n52|\n53|pushd \"%PROJECT_DIR%\"\n54|set \"PROJECT_DIR=%cd%\"\n55|popd\n56|\n57|REM ─── Set Key Paths ──────────────────────────────────────────\n58|set \"BACKEND_DIR=%PROJECT_DIR%\\upload\\GenericAgent-v1.0.0\"\n59|set \"BINARIES_DIR=%PROJECT_DIR%\\src-tauri\\binaries\"\n60|set \"LAUNCHER=%BINARIES_DIR%\\launch_backend.py\"\n61|set \"OUTPUT_FILE=%BINARIES_DIR%\\backend-x86_64-pc-windows-msvc.exe\"\n62|\n63|echo   Project root: %PROJECT_DIR%\n64|echo   Backend dir:  %BACKEND_DIR%\n65|echo   Launcher:     %LAUNCHER%\n66|echo.\n67|\n68|REM ─── [1/6] Check Prerequisites ─────────────────────────────\n69|echo [1/6] Checking prerequisites...\n70|\n71|where python >nul 2>&1\n72|if %errorlevel% neq 0 (\n73|    echo   ERROR: Python not found. Install Python 3.10+ from https://python.org\n74|    goto :error_exit\n75|)\n76|\n77|python -c \"import sys; exit(0 if sys.version_info >= (3, 10) else 1)\"\n78|if %errorlevel% neq 0 (\n79|    echo   ERROR: Python 3.10+ required. Found:\n80|    python --version\n81|    goto :error_exit\n82|)\n83|\n84|for /f \"tokens=*\" %%v in ('python --version') do echo   OK: %%v\n85|\n86|where pip >nul 2>&1\n87|if %errorlevel% neq 0 (\n88|    echo   ERROR: pip not found. Install it: python -m ensurepip\n89|    goto :error_exit\n90|)\n91|echo   OK: pip found\n92|\n93|where pyinstaller >nul 2>&1\n94|if %errorlevel% neq 0 (\n95|    echo   Installing PyInstaller...\n96|    pip install pyinstaller\n97|    if %errorlevel% neq 0 (\n98|        echo   ERROR: Failed to install PyInstaller\n99|        goto :error_exit\n100|    )\n101|)\n102|for /f \"tokens=*\" %%v in ('pyinstaller --version 2^>nul') do echo   OK: PyInstaller %%v\n103|\n104|REM Check backend directory\n105|if not exist \"%BACKEND_DIR%\\server.py\" (\n106|    echo   ERROR: Backend not found at: %BACKEND_DIR%\n107|    echo.\n108|    echo   The Python backend must be in: upload\\GenericAgent-Desktop-v1.2.0\\\n109|    echo   Make sure you have the complete project with the backend directory.\n110|    echo.\n111|    echo   If the backend is elsewhere, set the BACKEND_DIR variable:\n112|    echo     set BACKEND_DIR=C:\\path\\to\\backend\n113|    echo     scripts\\build-sidecar.bat\n114|    goto :error_exit\n115|)\n116|echo   OK: Backend directory found\n117|\n118|REM Check launcher script\n119|if not exist \"%LAUNCHER%\" (\n120|    echo   ERROR: Launcher script not found: %LAUNCHER%\n121|    echo   Make sure src-tauri\\binaries\\launch_backend.py exists.\n122|    goto :error_exit\n123|)\n124|echo   OK: Launcher script found\n125|\n126|echo.\n127|\n128|REM ─── [2/6] Clean if requested ──────────────────────────────\n129|if \"%CLEAN%\"==\"1\" (\n130|    echo [2/6] Cleaning build artifacts...\n131|    if exist \"%BACKEND_DIR%\\build\" rmdir /s /q \"%BACKEND_DIR%\\build\"\n132|    if exist \"%BACKEND_DIR%\\dist\" rmdir /s /q \"%BACKEND_DIR%\\dist\"\n133|    if exist \"%BACKEND_DIR%\\backend.spec\" del /q \"%BACKEND_DIR%\\backend.spec\"\n134|    echo   OK: Cleaned\n135|) else (\n136|    echo [2/6] Skipping clean ^(use --clean to remove artifacts^)\n137|)\n138|echo.\n139|\n140|REM ─── [3/6] Install Dependencies ────────────────────────────\n141|if \"%SKIP_\n\nFile size limit (5.0 KB) exceeded. Use shell commands (e.g., head, tail, grep) to read specific parts."
+          }
+        }
+      ],
+      "id": "9bf8b944-798c-41c8-93ac-3c5e28f6672b",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Let me update this script as well."
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_cgco8vtoecfl_1",
+          "toolName": "power---file_edit",
+          "input": {
+            "filePath": "scripts\\build-sidecar.bat",
+            "searchTerm": "REM ═══════════════════════════════════════════════════════════════\nREM GenericAgent — Build Sidecar Backend (Windows Batch Script v2)\nREM\nREM Packages the Python FastAPI backend as a standalone .exe using\nREM PyInstaller, then copies it to src-tauri/binaries/ with the\nREM correct Tauri target-triple naming convention.\nREM\nREM IMPORTANT: Run from project root!\nREM   cd C:\\path\\to\\GenericAgent-Desktop\nREM   scripts\\build-sidecar.bat\nREM\nREM Usage:\nREM   scripts\\build-sidecar.bat                  # Build for Windows\nREM   scripts\\build-sidecar.bat --clean          # Clean build artifacts first\nREM   scripts\\build-sidecar.bat --skip-deps      # Skip pip install\nREM ═══════════════════════════════════════════════════════════════\n\necho.\necho ================================================================\necho   GenericAgent - Sidecar Backend Builder v2\necho ================================================================",
+            "replacementText": "REM ═══════════════════════════════════════════════════════════════\nREM Shadow Agent — Build Sidecar Backend (Windows Batch Script v2)\nREM\nREM Packages the Python FastAPI backend as a standalone .exe using\nREM PyInstaller, then copies it to src-tauri/binaries/ with the\nREM correct Tauri target-triple naming convention.\nREM\nREM IMPORTANT: Run from project root!\nREM   cd C:\\path\\to\\ShadowAgent\nREM   scripts\\build-sidecar.bat\nREM\nREM Usage:\nREM   scripts\\build-sidecar.bat                  # Build for Windows\nREM   scripts\\build-sidecar.bat --clean          # Clean build artifacts first\nREM   scripts\\build-sidecar.bat --skip-deps      # Skip pip install\nREM ═══════════════════════════════════════════════════════════════\n\necho.\necho ================================================================\necho   Shadow Agent - Sidecar Backend Builder v2\necho ================================================================",
+            "isRegex": false,
+            "replaceAll": false
+          }
+        }
+      ],
+      "id": "7c9caafd-11b1-4a44-be3d-b597db845786",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 2230,
+        "receivedTokens": 468,
+        "cacheReadTokens": 183227,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_cgco8vtoecfl_1",
+          "toolName": "power---file_edit",
+          "output": {
+            "type": "text",
+            "value": "Successfully edited 'scripts\\build-sidecar.bat'."
+          }
+        }
+      ],
+      "id": "0d5e7e1a-28d3-45de-9acb-0796ad036091",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "Good. Now let me commit all these changes and push them to GitHub."
+        },
+        {
+          "type": "text",
+          "text": "Maintenant, commitez les changements et poussez :\n"
+        },
+        {
+          "type": "tool-call",
+          "toolCallId": "call_function_c7jpo4iteoke_1",
+          "toolName": "power---bash",
+          "input": {
+            "command": "cd \"C:\\Users\\seydi\\Downloads\\GenericAgent-Desktop-v1.2.0-COMPLETE\"; git add -A; git commit -m \"Update build scripts for Shadow Agent branding\" && git push",
+            "timeout": 60000
+          }
+        }
+      ],
+      "id": "0a580309-ab32-43b5-b8af-2fdd245d4758",
+      "usageReport": {
+        "model": "opencode/minimax-m2.5-free",
+        "sentTokens": 36,
+        "receivedTokens": 112,
+        "cacheReadTokens": 185915,
+        "messageCost": 0,
+        "agentTotalCost": 0
+      },
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
+    },
+    {
+      "role": "tool",
+      "content": [
+        {
+          "type": "tool-result",
+          "toolCallId": "call_function_c7jpo4iteoke_1",
+          "toolName": "power---bash",
+          "output": {
+            "type": "json",
+            "value": {
+              "stdout": "",
+              "stderr": "Au caract�re Ligne:1 : 144\r\n+ ... commit -m \"Update build scripts for Shadow Agent branding\" && git pus ...\r\n+                                                                ~~\r\nLe jeton ��&&�� n'est pas un s�parateur d'instruction valide.\r\n    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException\r\n    + FullyQualifiedErrorId : InvalidEndOfLine\r\n \r\n",
+              "exitCode": 1
+            }
+          }
+        }
+      ],
+      "id": "609dba8d-cc3e-4b58-9afa-31e164149fb0",
+      "promptContext": {
+        "id": "8b7260c2-0d42-4d56-af3e-a00f0039cb52"
+      }
     }
   ],
   "contextFiles": [

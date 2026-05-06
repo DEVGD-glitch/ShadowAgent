@@ -1,8 +1,8 @@
 @echo off
 REM ═══════════════════════════════════════════════════════════════
-REM GenericAgent — Debug Launch Script
+REM Shadow Agent — Debug Launch Script
 REM
-REM This script launches GenericAgent with full console output
+REM This script launches Shadow Agent with full console output
 REM visible, making it easy to diagnose startup issues.
 REM
 REM Usage:  scripts\debug-launch.bat
@@ -10,7 +10,7 @@ REM ═════════════════════════�
 
 echo.
 echo ================================================================
-echo   GenericAgent - Debug Launch
+echo   Shadow Agent - Debug Launch
 echo ================================================================
 echo.
 
@@ -27,7 +27,7 @@ if exist "%SCRIPT_DIR%..\package.json" if exist "%SCRIPT_DIR%..\src-tauri" (
     goto :found
 )
 
-echo ERROR: Cannot find GenericAgent project root!
+echo ERROR: Cannot find Shadow Agent project root!
 echo Please run this script from the project directory.
 pause
 exit /b 1
@@ -45,17 +45,17 @@ echo.
 REM ─── Check if the exe exists ────────────────────────────────
 set "EXE_PATH="
 
-if exist "%PROJECT_DIR%\GenericAgent.exe" (
-    set "EXE_PATH=%PROJECT_DIR%\GenericAgent.exe"
-    echo   [OK] Found: GenericAgent.exe ^(project root^)
-) else if exist "%PROJECT_DIR%\dist\GenericAgent.exe" (
-    set "EXE_PATH=%PROJECT_DIR%\dist\GenericAgent.exe"
-    echo   [OK] Found: dist\GenericAgent.exe
-) else if exist "%PROJECT_DIR%\src-tauri\target\release\GenericAgent.exe" (
-    set "EXE_PATH=%PROJECT_DIR%\src-tauri\target\release\GenericAgent.exe"
-    echo   [OK] Found: src-tauri\target\release\GenericAgent.exe
+if exist "%PROJECT_DIR%\ShadowAgent.exe" (
+    set "EXE_PATH=%PROJECT_DIR%\ShadowAgent.exe"
+    echo   [OK] Found: ShadowAgent.exe ^(project root^)
+) else if exist "%PROJECT_DIR%\dist\ShadowAgent.exe" (
+    set "EXE_PATH=%PROJECT_DIR%\dist\ShadowAgent.exe"
+    echo   [OK] Found: dist\ShadowAgent.exe
+) else if exist "%PROJECT_DIR%\src-tauri\target\release\ShadowAgent.exe" (
+    set "EXE_PATH=%PROJECT_DIR%\src-tauri\target\release\ShadowAgent.exe"
+    echo   [OK] Found: src-tauri\target\release\ShadowAgent.exe
 ) else (
-    echo   [ERROR] GenericAgent.exe not found!
+    echo   [ERROR] ShadowAgent.exe not found!
     echo.
     echo   Have you built the app yet? Run: scripts\build-exe.bat
     echo.
@@ -94,11 +94,11 @@ if exist "%PROJECT_DIR%\src-tauri\binaries\backend-x86_64-pc-windows-msvc.exe" (
 
 echo.
 echo ────────────────────────────────────────────────────────────────
-echo   Launching GenericAgent in DEBUG mode...
+echo   Launching Shadow Agent in DEBUG mode...
 echo   Console output will appear below.
 echo   If the app doesn't open, the error message will show here.
 echo.
-echo   Log files: %%APPDATA%%\com.genericagent.desktop\logs\
+echo   Log files: %%APPDATA%%\com.shadowagent.desktop\logs\
 echo ────────────────────────────────────────────────────────────────
 echo.
 
@@ -115,7 +115,7 @@ if %EXIT_CODE% equ 0 (
     echo   App exited with error code: %EXIT_CODE%
     echo.
     echo   Check the log files at:
-    echo   %%APPDATA%%\com.genericagent.desktop\logs\
+    echo   %%APPDATA%%\com.shadowagent.desktop\logs\
 )
 echo ────────────────────────────────────────────────────────────────
 echo.

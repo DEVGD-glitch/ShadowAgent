@@ -1,14 +1,14 @@
 @echo off
 setlocal enabledelayedexpansion
 REM ═══════════════════════════════════════════════════════════════
-REM GenericAgent — Build Sidecar Backend (Windows Batch Script v2)
+REM Shadow Agent — Build Sidecar Backend (Windows Batch Script v2)
 REM
 REM Packages the Python FastAPI backend as a standalone .exe using
 REM PyInstaller, then copies it to src-tauri/binaries/ with the
 REM correct Tauri target-triple naming convention.
 REM
 REM IMPORTANT: Run from project root!
-REM   cd C:\path\to\GenericAgent-Desktop
+REM   cd C:\path\to\ShadowAgent
 REM   scripts\build-sidecar.bat
 REM
 REM Usage:
@@ -19,7 +19,7 @@ REM ═════════════════════════�
 
 echo.
 echo ================================================================
-echo   GenericAgent - Sidecar Backend Builder v2
+echo   Shadow Agent - Sidecar Backend Builder v2
 echo ================================================================
 echo.
 

@@ -1,10 +1,11 @@
 @echo off
 setlocal enabledelayedexpansion
 REM ═══════════════════════════════════════════════════════════════
-REM GenericAgent — Windows Desktop Build Script (v6)
+REM Shadow Agent — Windows Desktop Build Script (v1.2.0)
 REM
-REM Changes from v5:
-REM   - Auto-detect backend dir (upload\GenericAgent-v1.2.0 OR backend\)
+REM Changes from v6:
+REM   - Renamed to Shadow Agent
+REM   - Auto-detect backend dir (upload\GenericAgent-v1.0.0 OR backend\)
 REM   - Copy final exe to project root for easy access
 REM   - Show clear instructions after build
 REM   - Add --skip-tauri flag for sidecar-only build
@@ -21,7 +22,7 @@ REM ═════════════════════════�
 
 echo.
 echo ================================================================
-echo   GenericAgent - Windows Desktop Builder v6
+echo   Shadow Agent - Windows Desktop Builder v1.2.0
 echo ================================================================
 echo.
 
@@ -75,14 +76,14 @@ if exist "%SCRIPT_DIR%..\package.json" if exist "%SCRIPT_DIR%..\src\app" (
     goto :found_root
 )
 
-echo   ERROR: Cannot find GenericAgent project root!
+echo   ERROR: Cannot find Shadow Agent project root!
 echo.
 echo   Could not find package.json and src-tauri/ in:
 echo     Current dir:  %cd%
 echo     Script dir:   %SCRIPT_DIR%
 echo.
 echo   Please cd to the project folder first:
-echo     cd /d "%USERPROFILE%\Downloads\GenericAgent-Desktop-v1.2.0"
+echo     cd /d "%USERPROFILE%\Downloads\ShadowAgent"
 echo     scripts\build-exe.bat
 echo.
 pause
@@ -455,16 +456,16 @@ for %%f in ("src-tauri\target\release\bundle\msi\*.msi") do (
 )
 
 REM Copy portable exe
-if exist "src-tauri\target\release\GenericAgent.exe" (
-    copy /y "src-tauri\target\release\GenericAgent.exe" "%DIST_DIR%\" >nul
-    echo   OK: GenericAgent.exe ^(portable^)
+if exist "src-tauri\target\release\ShadowAgent.exe" (
+    copy /y "src-tauri\target\release\ShadowAgent.exe" "%DIST_DIR%\" >nul
+    echo   OK: ShadowAgent.exe ^(portable^)
     set "FOUND_OUTPUT=1"
 )
 
 REM ALSO copy to project root for easy access
-if exist "src-tauri\target\release\GenericAgent.exe" (
-    copy /y "src-tauri\target\release\GenericAgent.exe" "%PROJECT_DIR%\GenericAgent.exe" >nul
-    echo   OK: GenericAgent.exe copied to project root
+if exist "src-tauri\target\release\ShadowAgent.exe" (
+    copy /y "src-tauri\target\release\ShadowAgent.exe" "%PROJECT_DIR%\ShadowAgent.exe" >nul
+    echo   OK: ShadowAgent.exe copied to project root
 )
 
 if "%FOUND_OUTPUT%"=="0" (
@@ -488,13 +489,13 @@ echo.
 echo   HOW TO RUN THE APP:
 echo.
 echo   Option 1 - NSIS Installer ^(recommended^):
-echo     1. Double-click: %DIST_DIR%\GenericAgent_xxx_x64-setup.exe
+echo     1. Double-click: %DIST_DIR%\ShadowAgent_xxx_x64-setup.exe
 echo     2. Follow the installation wizard
-echo     3. Find "GenericAgent" in your Start Menu or Desktop
+echo     3. Find "Shadow Agent" in your Start Menu or Desktop
 echo.
 echo   Option 2 - Portable EXE:
-echo     1. Double-click: %PROJECT_DIR%\GenericAgent.exe
-echo     2. Or run in PowerShell: .\GenericAgent.exe
+echo     1. Double-click: %PROJECT_DIR%\ShadowAgent.exe
+echo     2. Or run in PowerShell: .\ShadowAgent.exe
 echo        (NOTE: PowerShell requires .\ prefix!)
 echo.
 echo   Option 3 - Debug mode:
@@ -506,7 +507,7 @@ echo         app launches. Wait 3-5 seconds for it to initialize.
 echo.
 echo   TROUBLESHOOTING:
 echo     - App doesn't open? Run: scripts\debug-launch.bat
-echo     - Check logs at: %%APPDATA%%\com.genericagent.desktop\logs\
+echo     - Check logs at: %%APPDATA%%\com.shadowagent.desktop\logs\
 echo     - Missing WebView2? Install from: https://developer.microsoft.com/microsoft-edge/webview2/
 echo ================================================================
 echo.
