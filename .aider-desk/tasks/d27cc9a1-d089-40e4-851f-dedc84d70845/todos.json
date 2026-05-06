@@ -1,0 +1,45 @@
+{
+  "initialUserPrompt": "Professional improvements to Shadow Agent app - make it production-ready",
+  "items": [
+    {
+      "name": "IMPROVE: Replace anime personalities with professional options",
+      "completed": false
+    },
+    {
+      "name": "IMPROVE: Add Help Center page with documentation",
+      "completed": false
+    },
+    {
+      "name": "IMPROVE: Add Quick Tour for new users",
+      "completed": false
+    },
+    {
+      "name": "IMPROVE: Add Welcome screen with feature showcase",
+      "completed": false
+    },
+    {
+      "name": "IMPROVE: Add keyboard shortcuts modal (Ctrl+/)",
+      "completed": false
+    },
+    {
+      "name": "IMPROVE: Fix all remaining GenericAgent references",
+      "completed": false
+    },
+    {
+      "name": "IMPROVE: Add native dark/light theme toggle",
+      "completed": false
+    },
+    {
+      "name": "IMPROVE: Add system tray minimize option",
+      "completed": false
+    },
+    {
+      "name": "IMPROVE: Add auto-start on login option",
+      "completed": false
+    },
+    {
+      "name": "FINAL: Clean up and verify all changes",
+      "completed": false
+    }
+  ]
+}

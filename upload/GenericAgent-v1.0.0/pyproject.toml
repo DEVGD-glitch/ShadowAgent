@@ -1,0 +1,244 @@
+# ══════════════════════════════════════════════════════════════════════════════
+#  GenericAgent — Project Configuration
+#  Self-evolving autonomous agent framework with multi-LLM support
+# ══════════════════════════════════════════════════════════════════════════════
+
+[project]
+name = "genericagent"
+version = "1.0.0"  # Fixed semver: v1.0 was released before v0.x which broke pip resolution. Resetting to v1.0.0.
+description = "Minimalist self-evolving autonomous agent framework"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = { text = "MIT" }
+authors = [
+    { name = "GenericAgent Team" },
+]
+keywords = ["agent", "llm", "autonomous", "ai", "claude", "gpt", "mcp", "state-graph", "chroma", "voice"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "requests>=2.28",
+    "beautifulsoup4>=4.12",
+    "bottle>=0.12",
+    "websockets>=12.0",
+    "markdown2>=2.4",
+    "python-dotenv>=1.0",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+# Interface graphique Qt (recommandé pour l'utilisation desktop)
+qt = [
+    "PySide6>=6.6",
+]
+# Interface Streamlit (alternative web)
+streamlit = [
+    "streamlit>=1.28",
+    "pywebview>=4.0",
+]
+# Navigateur — pour le contrôle de navigateur via CDP
+browser = [
+    "lxml>=4.9",
+]
+# Embeddings sémantiques locaux (hors ligne)
+embeddings = [
+    "sentence-transformers>=2.2",
+]
+# API server
+server = [
+    "fastapi>=0.104",
+    "uvicorn>=0.24",
+    "pydantic>=2.0",
+]
+# Intégrations messageries
+all-frontends = [
+    "python-telegram-bot>=20.0",
+    "qq-botpy>=1.0",
+    "pycryptodome>=3.19",
+    "qrcode>=7.4",
+    "lark-oapi>=1.0",
+    "wecom-aibot-sdk>=1.0",
+    "dingtalk-stream>=0.20",
+]
+# Vector memory (ChromaDB)
+chroma = [
+    "chromadb>=0.4",
+]
+# Voice pipeline (STT/TTS)
+voice = [
+    "pyaudio>=0.2",
+    "edge-tts>=6.1",
+]
+# Installation complète (core + qt + browser + embeddings + chroma)
+full = [
+    "genericagent[qt,browser,embeddings,chroma]",
+]
+# Fallback legacy (si websockets ne fonctionne pas)
+legacy-ws = [
+    "simple-websocket-server>=0.4",
+]
+# Development dependencies
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "pytest-timeout>=2.1",
+    "mypy>=1.5",
+    "ruff>=0.1",
+    "pre-commit>=3.5",
+]
+
+[project.scripts]
+genericagent = "agentmain:main_cli"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = []
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  Tool Configurations
+# ══════════════════════════════════════════════════════════════════════════════
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short -x"
+markers = [
+    "qt: tests requiring PySide6",
+    "slow: slow-running tests",
+    "integration: integration tests requiring external services",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:simphtml",
+    "ignore::PendingDeprecationWarning",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+src = ["."]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "RUF",  # ruff-specific
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "B008",   # function call in default argument
+    "B905",   # zip without strict
+    "SIM108", # ternary operator
+    "N802",   # function name should be lowercase (existing naming conventions)
+    "N803",   # argument name should be lowercase
+    "N806",   # variable in function should be lowercase
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ga", "llmcore", "agent_loop", "agentmain", "i18n", "env_loader", "engine", "tools", "mcp"]
+
+[tool.mypy]
+python_version = "3.10"
+plugins = []
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+no_strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = false
+show_error_codes = true
+exclude = [
+    "temp/",
+    "workspace/",
+    "memory/",
+]
+
+# Strict mode for the protocols module (fully typed)
+[[tool.mypy.overrides]]
+module = ["protocols"]
+strict = true
+
+# External modules without type stubs — ignore missing imports
+[[tool.mypy.overrides]]
+module = [
+    "simphtml",
+    "TMWebDriver",
+    "ljqCtrl",
+]
+ignore_missing_imports = true
+
+# Qt and other third-party modules without type stubs
+[[tool.mypy.overrides]]
+module = [
+    "PySide6.*",
+    "markdown",
+    "markdown2",
+    "bottle",
+    "websockets",
+    "lxml.*",
+    "lark_oapi.*",
+    "pycryptodome.*",
+    "plugins.*",
+    "dotenv",
+]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "*/tests/*",
+    "*/build/*",
+    "*/__pycache__/*",
+    "mykey*.py",
+    "frontends/*",
+]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+    "pass",
+    "raise NotImplementedError",
+    "@abstractmethod",
+]
+
+# Per-module coverage thresholds
+# tools/ touches filesystem and network — 90% threshold
+# agentmain/ — 80% threshold
+# memory/ — critical for data integrity — 85% threshold
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.paths]
+tools = ["tools/*"]
+agentmain = ["agentmain/*"]
+memory = ["memory/*"]
+
+[tool.coverage.thresholds]
+"tools/" = 90
+"agentmain/" = 80
+"memory/" = 85

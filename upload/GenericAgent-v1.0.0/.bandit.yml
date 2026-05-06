@@ -1,0 +1,26 @@
+# Bandit SAST configuration for GenericAgent
+# Run: bandit -r . -c .bandit.yml
+
+# Skip specific checks that are acceptable in our context
+skips:
+  - B101  # assert_used — we're replacing asserts with proper checks
+  - B311  # random — not used for cryptographic purposes
+
+# Show surrounding code context for each finding
+show_line_context: true
+
+# Severity levels to report
+format: custom
+
+# Directories to exclude from scanning
+exclude_dirs:
+  - tests
+  - .git
+  - node_modules
+  - venv
+  - .venv
+  - __pycache__
+  - build
+  - dist
+  - .eggs
+  - "*.egg-info"

@@ -1,0 +1,39 @@
+:81 {
+	@transform_port_query {
+		query XTransformPort=*
+	}
+
+	@port_allowed {
+		expression {query.XTransformPort} in ["3000", "3001", "3002", "3003", "8765"]
+	}
+
+	handle @transform_port_query {
+		handle @port_allowed {
+			reverse_proxy localhost:{query.XTransformPort} {
+				header_up Host {host}
+				header_up X-Forwarded-For {remote_host}
+				header_up X-Forwarded-Proto {scheme}
+				header_up X-Real-IP {remote_host}
+			}
+		}
+
+		respond "Forbidden: port not allowed" 403 {
+			close
+		}
+	}
+
+	handle {
+		reverse_proxy localhost:3000 {
+			header_up Host {host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	header {
+		X-Frame-Options "DENY"
+		X-Content-Type-Options "nosniff"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' ws: wss: http://localhost:* https://*.space-z.ai https://*.chatglm.site;"
+	}
+}

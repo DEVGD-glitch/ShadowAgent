@@ -1,0 +1,100 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g. 1.0.0)'
+        required: false
+        default: '1.0.0'
+      create_release:
+        description: 'Create GitHub Release after build'
+        required: false
+        type: boolean
+        default: false
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: 'x64'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+          pip install pyinstaller Pillow
+
+      - name: Build with PyInstaller
+        run: python build/build_installer.py --clean --skip-nsis
+
+      - name: Verify build
+        shell: pwsh
+        run: |
+          if (Test-Path "dist/genericagent.exe") {
+            $size = (Get-Item "dist/genericagent.exe").Length / 1MB
+            Write-Host "Build OK: dist/genericagent.exe ($([math]::Round($size, 1)) MB)"
+          } else {
+            Write-Host "Build FAILED: genericagent.exe not found"
+            exit 1
+          }
+
+      - name: Create portable ZIP
+        shell: pwsh
+        run: |
+          $ver = "${{ inputs.version }}"
+          if (-not $ver) { $ver = "1.0.0" }
+          Compress-Archive -Path "dist/genericagent.exe" -DestinationPath "dist/GenericAgent-$ver-windows-x64.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GenericAgent-windows-x64
+          path: |
+            dist/genericagent.exe
+            dist/GenericAgent-*-windows-x64.zip
+          retention-days: 30
+
+      - name: Create GitHub Release
+        if: ${{ inputs.create_release || startsWith(github.ref, 'refs/tags/v') }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version && format('v{0}', inputs.version) || github.ref_name }}
+          name: GenericAgent ${{ inputs.version || github.ref_name }}
+          draft: true
+          files: |
+            dist/genericagent.exe
+            dist/GenericAgent-*-windows-x64.zip
+          body: |
+            ## GenericAgent ${{ inputs.version || '1.0.0' }}
+
+            ### Downloads
+            - **genericagent.exe** — Standalone executable (no Python needed)
+            - **GenericAgent-*-windows-x64.zip** — Portable ZIP
+
+            ### Quick Start
+            1. Download genericagent.exe
+            2. Double-click to launch
+            3. Follow the onboarding wizard
+            4. Done!
+
+            ### First Run
+            - Windows may show a security warning — click "More info" then "Run anyway"
+            - The onboarding wizard guides you through API key setup
+            - Keys are stored in Windows Credential Manager, never in files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

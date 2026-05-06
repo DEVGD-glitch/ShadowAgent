@@ -1,0 +1,1 @@
+{"default":{"identifier":"default","description":"Default permissions for GenericAgent","local":true,"windows":["main"],"permissions":["core:default","shell:allow-spawn","shell:allow-stdin-write","shell:allow-kill","dialog:allow-open","dialog:allow-save","dialog:allow-message","dialog:allow-ask","dialog:allow-confirm","process:allow-restart","process:allow-exit"]}}

@@ -1,0 +1,25 @@
+# ══════════════════════════════════════════════════════════════════════════════
+#  GenericAgent — Pre-commit hooks
+# ══════════════════════════════════════════════════════════════════════════════
+
+repos:
+  # ── Ruff linter (already used in the project) ──────────────────────────────
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.6
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  # ── i18n string enforcement ────────────────────────────────────────────────
+  # Checks for hardcoded non-ASCII strings in frontend files that should
+  # be wrapped in t() translation calls.
+  - repo: local
+    hooks:
+      - id: check-i18n-strings
+        name: check-i18n-strings
+        entry: python scripts/check_i18n_strings.py
+        language: python
+        types: [python]
+        pass_filenames: false
+        always_run: true

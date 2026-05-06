@@ -1,0 +1,30 @@
+{
+  "id": "d27cc9a1-d089-40e4-851f-dedc84d70845",
+  "baseDir": "C:\\Users\\seydi\\Downloads\\GenericAgent-Desktop-v1.2.0-COMPLETE",
+  "name": "je veux tu analyse chaque",
+  "archived": false,
+  "aiderTotalCost": 0,
+  "agentTotalCost": 0,
+  "mainModel": "groq/openai/gpt-oss-120b",
+  "currentMode": "agent",
+  "contextCompactingThreshold": 0,
+  "weakModelLocked": false,
+  "parentId": null,
+  "lastAgentProviderMetadata": {
+    "opencode": {}
+  },
+  "autoApprove": true,
+  "weakModel": null,
+  "reasoningEffort": null,
+  "thinkingTokens": null,
+  "provider": "opencode",
+  "model": "minimax-m2.5-free",
+  "workingMode": "local",
+  "updatedAt": "2026-05-06T14:52:40.400Z",
+  "startedAt": "2026-05-06T14:52:40.399Z",
+  "state": "IN_PROGRESS",
+  "createdAt": "2026-05-05T21:42:44.757Z",
+  "completedAt": "2026-05-06T14:51:14.991Z",
+  "pinned": true,
+  "interruptedAt": "2026-05-06T11:08:06.710Z"
+}

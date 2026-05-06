@@ -1,0 +1,76 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-config-schema/schema.json",
+  "productName": "Shadow Agent",
+  "version": "1.2.0",
+  "identifier": "com.shadowagent.desktop",
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:3000",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../out"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Shadow Agent — Your AI Companion",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true,
+        "decorations": true,
+        "transparent": false,
+        "resizable": true,
+        "fullscreen": false,
+        "theme": "Dark",
+        "visible": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' http://localhost:* ws://localhost:* https:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' http://localhost:* ws://localhost:* https:; worker-src 'self' blob:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": ["binaries/backend-x86_64-pc-windows-msvc.exe"],
+    "copyright": "Copyright 2025 Shadow Agent Team",
+    "category": "Productivity",
+    "shortDescription": "Shadow Agent — Your Self-Evolving AI Desktop Companion",
+    "longDescription": "Shadow Agent is your personal AI companion that thinks, learns, and evolves. It controls your computer with stunning reactivity and intelligence, packaged as a one-click downloadable desktop application.",
+    "windows": {
+      "digestAlgorithm": "sha256",
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      },
+      "nsis": {
+        "displayLanguageSelector": false,
+        "installMode": "currentUser",
+        "languages": ["English"],
+        "compression": "lzma"
+      }
+    }
+  },
+  "plugins": {
+    "shell": {
+      "open": true,
+      "sidecar": {
+        "backend": {
+          "path": "binaries/backend-x86_64-pc-windows-msvc.exe",
+          "scope": {
+            "name": "backend",
+            "sidecar": true,
+            "args": false
+          }
+        }
+      }
+    }
+  }
+}

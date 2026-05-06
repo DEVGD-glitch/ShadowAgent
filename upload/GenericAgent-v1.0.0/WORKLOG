@@ -1,0 +1,103 @@
+# GenericAgent Worklog
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: Analyze ClawX repository architecture for one-click install + native Windows desktop app approach
+
+Work Log:
+- Cloned and analyzed https://github.com/ValueCell-ai/ClawX.git
+- Read key files: package.json, electron-builder.yml, installer.nsh, electron/main/index.ts, bundle-openclaw.mjs, download-bundled-uv.mjs, download-bundled-node.mjs, after-pack.cjs, gateway/manager.ts
+- Documented ClawX architecture: Electron + React + Vite shell, Node.js OpenClaw Gateway as child process, NSIS installer, auto-updater, bundled Python (uv) and Node.js runtimes
+- Identified key patterns: rename-instead-of-delete for upgrades, Windows Defender exclusion, long path support, async stale directory cleanup, platform-specific binary pruning
+
+Stage Summary:
+- ClawX uses Electron 40 as desktop shell with React UI
+- OpenClaw Gateway (Node.js) runs as UtilityProcess child
+- Bundled runtimes: uv (Python package manager) + node.exe
+- NSIS installer with sophisticated upgrade handling (customCheckAppRunning, stale dir rename)
+- Auto-update via electron-updater (OSS + GitHub Releases)
+- afterPack hook for platform-specific cleanup and module patching
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Evaluate feasibility and choose approach for GenericAgent one-click install + native Windows desktop app
+
+Work Log:
+- Analyzed GenericAgent current architecture: Python-based, PySide6/Qt UI, 8 frontends, FastAPI server
+- Compared with ClawX architecture: Node.js-based, React UI, Electron shell
+- Evaluated 3 approaches: (1) Electron wrapper + React UI, (2) PyInstaller + NSIS, (3) Hybrid Electron + Python backend
+- Selected hybrid approach: Phase 1 (PyInstaller + NSIS) for immediate delivery, Phase 2 (Electron + React) as future option
+
+Stage Summary:
+- Chosen approach: PyInstaller bundles Python + PySide6 into standalone .exe
+- NSIS creates one-click Windows installer (like ClawX's installer.nsh)
+- Auto-update via GitHub Releases API (like ClawX's electron-updater)
+- GenericAgentWindow class for full desktop window mode
+- GitHub Actions CI/CD for automated builds on release
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Implement one-click install + native Windows desktop app for GenericAgent
+
+Work Log:
+- Created build/genericagent.spec (PyInstaller spec file with all hidden imports, data files, excludes)
+- Created build/runtime_hook.py (environment setup for bundled mode: workspace dirs, SSL, Qt plugins)
+- Created build/hooks/hook-frontends.py (PyInstaller hook for frontend modules)
+- Created build/build_windows.py (automated build script: PyInstaller + NSIS + portable ZIP)
+- Created build/installer.nsi (NSIS installer script with ClawX-inspired features: stale dir rename, Defender exclusion, long paths, data preservation on uninstall)
+- Created agentmain/auto_update.py (GitHub Releases-based auto-update system with Qt integration)
+- Created launch_desktop.py (Windows desktop launcher with first-run setup, single instance, auto-update)
+- Created build/build_macos.sh (macOS .app bundle + .dmg creation script)
+- Created .github/workflows/build-desktop.yml (CI/CD for Windows, macOS, Linux builds)
+- Created install_windows.bat (one-click installer for non-bundled mode)
+- Added GenericAgentWindow class to qtapp.py (full desktop window for bundled app)
+- Added show_update_notification method to ChatPanel
+
+Stage Summary:
+- Complete build pipeline: PyInstaller → NSIS installer → GitHub Release
+- Files created:
+  - build/genericagent.spec
+  - build/runtime_hook.py
+  - build/hooks/hook-frontends.py
+  - build/build_windows.py
+  - build/installer.nsi
+  - build/build_macos.sh
+  - agentmain/auto_update.py
+  - launch_desktop.py
+  - install_windows.bat
+  - .github/workflows/build-desktop.yml
+- Modified files:
+  - frontends/qtapp.py (added GenericAgentWindow class, show_update_notification)
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Fix all 9 gaps for 10/10 rating + enhanced build pipeline
+
+Work Log:
+- **Gap 6 (RAG singleton)**: Added `get_shared_rag_engine()` and `reset_shared_rag_engine()` to `memory/crystallization.py`. Both `auto_index_to_rag()` and `auto_index_text_to_rag()` now use the shared singleton instead of creating new RAGEngine instances per call. Thread-safe with double-checked locking.
+- **Gap 7+8 (Dockerfile)**: Fixed `Dockerfile` ENTRYPOINT to support both server and CLI modes via `GA_MODE` env var. Default is `GA_MODE=server` which starts the FastAPI server on port 8765.
+- **Gap 2 (ReasoningEngine auto-integration)**: Added auto-activation in `agentmain/core.py` — `GenericAgent.run()` now calls `ReasoningEngine.suggest_mode()` on each task and attaches a ReasoningEngine instance to the handler when a non-DEFAULT mode is suggested. The agent_loop already has ReasoningEngine integration code (system prompt injection + turn_end_callback), it just needed the engine to be instantiated.
+- **Gap 9 (Skill search tool)**: Added `do_skill_search()` method to `GenericAgentHandler` in `ga.py`, added tool schema to both `assets/tools_schema.json` and `assets/tools_schema_cn.json`. The tool queries the 105K+ skill card API and returns formatted results.
+- **Gap 3 (Crystallization fixes)**: (a) Wired `MemoryWriteObserver.on_memory_write()` into `do_file_patch()` (was already in `do_file_write`). (b) Fixed done-hooks processing — after the agent loop exits, remaining done-hooks are now auto-submitted as a continuation task via `parent.put_task()` for crystallization.
+- **Gap 1 (Orchestrator tool enforcement)**: (a) Removed the builtin-tools-bypass in `_restrict_tools()` — specialist profiles must now explicitly list every tool they need. (b) Added dispatch-level enforcement in `BaseHandler.dispatch()` — if `_active_specialist` is set, tools not in `allowed_tools` are rejected with an error message. (c) The orchestrator now sets `handler._active_specialist = profile` before execution and clears it afterwards.
+- **Gap 5 (Better offline embeddings)**: Replaced the MD5-hash-based `_embed_simple()` in `memory/vector/store.py` with a SimHash + n-gram TF-IDF approach that preserves sub-word semantic similarity. Also fixed the cache key from `text[:200]` (collision-prone) to `hashlib.sha256(text.encode()).hexdigest()[:32]`.
+- **Gap 4 (MCP SSE improvements)**: Fixed multi-line data parsing in `mcp/client.py` `_sse_listener()` (per SSE spec, consecutive `data:` lines are concatenated). Added SSE comment/heartbeat handling. Added automatic reconnection with exponential backoff (5 retries). Added MCP auto-connection in `GenericAgent.__init__()` via `_connect_mcp_servers()`.
+- **Build pipeline v2**: Created enhanced build scripts: `build/genericagent.spec` (updated), `build/installer.nsi` (production NSIS with uv integration), `build/build_installer.py` (automated pipeline), `build/launch_desktop.py` (desktop launcher with splash screen + first-run setup), `build/autoupdate.py` (semver-based auto-update with rollback).
+
+Stage Summary:
+- All 9 critical gaps are now fixed:
+  1. ✅ Orchestrator enforces allowed_tools (intersection-based + dispatch-level check)
+  2. ✅ ReasoningEngine auto-integrated based on task keywords
+  3. ✅ Auto-crystallization done-hooks processed after loop exit
+  4. ✅ MCP SSE multi-line parsing + reconnection + auto-connect
+  5. ✅ SimHash + n-gram TF-IDF replaces MD5 hash for offline embeddings
+  6. ✅ Shared RAGEngine singleton in crystallization module
+  7. ✅ Dockerfile ENTRYPOINT fixed (GA_MODE=server default)
+  8. ✅ MemoryWriteObserver wired in both file_write and file_patch
+  9. ✅ skill_search tool wired as 10th agent tool
+- Build pipeline now includes: PyInstaller + NSIS + auto-update + desktop launcher
+- Modified files: agentmain/core.py, agentmain/orchestrator.py, agent_loop.py, ga.py, mcp/client.py, memory/crystallization.py, memory/vector/store.py, Dockerfile, assets/tools_schema.json, assets/tools_schema_cn.json

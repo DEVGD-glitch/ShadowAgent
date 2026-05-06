@@ -1,0 +1,115 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+src-tauri/target/
+upload/dist/
+upload/GenericAgent-v1.0.0/build/
+upload/GenericAgent-v1.0.0/*.spec
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Credentials (NEVER commit these!)
+mykey.py
+mykey.json
+.shadowagent/
+*.key
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+dev.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Backend compiled Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Rust
+Cargo.lock
+
+# SQLite
+*.db
+
+# Bundled executables (releases)
+*.exe
+!src-tauri/binaries/*.exe
+
+# Python templates with API key placeholders (NEVER commit!)
+mykey_template*.py
+mykey_*.py
+
+# Backend build artifacts
+binaries/*.exe
+!src-tauri/binaries/backend*.exe
+
+# Test databases
+*.sqlite
+*.sqlite3
+
+# macOS
+.vscode-global/
+
+# Audio/video files
+*.mp3
+*.mp4
+*.wav
+*.webm
+
+# Large media files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.svg
+!public/*.svg
+!src-tauri/icons/*.png
+!src-tauri/icons/*.ico
+
+# Prisma
+prisma/*.db
+prisma/*.db-journal
+
+# Backend Python venv (if any)
+upload/.venv/

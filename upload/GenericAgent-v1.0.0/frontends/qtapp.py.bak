@@ -1,0 +1,832 @@
+"""
+Interface graphique de bureau — PySide6 Panneau de chat + Bouton flottant   thanks to GaoZhiCheng
+Dépendance: pip install PySide6 | Optionnel: pip install markdown
+Usage: python frontends/qtapp.py
+
+Architecture modulaire (Phase 3) — orchestrateur mince :
+  session_manager.py, stream_handler.py, pages/*.py, constants.py,
+  theme.py, utils.py, widgets.py, floating_button.py
+
+Phase 7 — UI/UX Superpowers :
+  command_palette.py, tray_icon.py, ApprovalDialog, AgentStatusBar,
+  ToolCallWidget, ThinkingSection, drag-and-drop, multi-theme
+"""
+from __future__ import annotations
+import logging
+import os, sys, time
+from typing import Optional
+
+logger = logging.getLogger("qtapp")
+
+try:
+    from i18n import t
+except ImportError:
+    def t(key, *args, **kwargs):
+        return key
+
+from PySide6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
+    QStackedWidget, QTextEdit, QApplication, QMessageBox, QMenu, QLineEdit,
+    QShortcut, QSystemTrayIcon,
+)
+from PySide6.QtCore import Qt, QTimer, QPoint, QSize, QEvent
+from PySide6.QtGui import (
+    QPainter, QColor, QLinearGradient, QPen, QPainterPath, QCursor, QFont, QRegion,
+    QKeySequence, QIcon,
+)
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from agentmain import GeneraticAgent
+from ga import set_shell_confirm_callback
+
+from frontends.qt.session_manager import SessionManager
+from frontends.qt.stream_handler import StreamHandler
+from frontends.qt.pages.chat_page import ChatPage
+from frontends.qt.pages.history_page import HistoryPage
+from frontends.qt.pages.sop_page import SOPPage
+from frontends.qt.pages.settings_page import SettingsPage
+from frontends.qt.constants import _SVG_CHAT, _SVG_CLOCK, _SVG_BOOK, _SVG_GEAR, _SVG_PLUS
+from frontends.qt.theme import C, apply_theme, current_theme_name, current_theme, get_theme, on_theme_changed
+from frontends.qt.utils import _svg_icon, _build_prompt_with_uploads
+from frontends.qt.widgets import (
+    _Separator, _StreamingBadge, _TabButton,
+    ApprovalDialog, APPROVAL_ALLOW, APPROVAL_DENY, APPROVAL_ALWAYS_ALLOW,
+    AgentStatusBar, ToolCallWidget, ThinkingSection, _extract_thinking,
+)
+from frontends.qt.floating_button import FloatingButton
+from frontends.qt.command_palette import CommandPalette
+from frontends.qt.tray_icon import TrayManager
+
+# ── Styles réutilisés ─────────────────────────────────────────────────────
+_SEARCH_BTN_SS = ("QPushButton{background:transparent;border:none;border-radius:13px}"
+                   "QPushButton:hover{background:rgba(63,63,70,0.6)}")
+_CLOSE_SEARCH_SS = ("QPushButton{background:transparent;color:#71717a;border:none;font-size:16px}"
+                     "QPushButton:hover{color:#a1a1aa}")
+_WIN_BTN_SS = ('QPushButton{background:rgba(63,63,70,0.6);color:#a1a1aa;border:none;'
+               'border-radius:13px;font-size:12px}'
+               'QPushButton:hover{background:rgba(63,63,70,0.9);color:white}')
+_CLOSE_BTN_SS = ('QPushButton{background:rgba(63,63,70,0.6);color:#a1a1aa;border:none;'
+                 'border-radius:13px;font-size:14px}'
+                 'QPushButton:hover{background:rgba(220,38,38,0.85);color:white}')
+_NEW_SESS_SS = ('QPushButton{background:rgba(124,58,237,0.18);color:#a78bfa;'
+                'border:1px solid rgba(124,58,237,0.3);border-radius:7px;'
+                'padding:0 10px;font-size:12px;font-weight:700}'
+                'QPushButton:hover{background:rgba(124,58,237,0.35);color:white}')
+def _model_menu_ss() -> str:
+    """Generate the model-menu stylesheet from the current theme."""
+    t = current_theme()
+    return (f"QMenu{{background:{t.panel};border:1px solid {t.border};"
+            f"padding:4px 0}}QMenu::item{{color:{t.text};padding:6px 20px 6px 12px;"
+            f"font-size:12px}}QMenu::item:selected{{background:rgba(63,63,70,0.6)}}")
+
+def _search_input_ss() -> str:
+    """Generate the search-input stylesheet from the current theme."""
+    t = current_theme()
+    return (f"QLineEdit{{background:rgba(32,32,38,0.9);border:1px solid {t.border};"
+            f"border-radius:13px;color:{t.text};font-size:13px;padding:0 10px}}"
+            f"QLineEdit::placeholder{{color:{t.muted}}}")
+
+
+class ChatPanel(QWidget):
+    """Frameless always-on-top chat window — thin orchestrator with UI superpowers."""
+
+    def __init__(self, agent):
+        super().__init__()
+        self.agent = agent
+        self._session_mgr = SessionManager()
+        self._stream_handler = StreamHandler(
+            self._on_stream_chunk,
+            self._on_stream_done,
+            on_tool_call=self._on_tool_call,
+            on_tool_result=self._on_tool_result,
+            on_thinking_start=self._on_thinking_start,
+            on_thinking_end=self._on_thinking_end,
+        )
+        self._settings_health_checked = False
+        self._manual_stop = False
+        self._drag_pos: Optional[QPoint] = None
+        self._poll_timer = QTimer(self)
+        self._poll_timer.timeout.connect(self._poll_queue)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.resize(530, 700)
+        set_shell_confirm_callback(self._shell_confirm_dialog)
+        self._build_ui()
+        self._connect_signals()
+
+        # Phase 7: Active tool call widgets tracking (keyed by tool call id)
+        self._active_tool_calls: dict[str, ToolCallWidget] = {}
+
+        # Circuit breaker state change banner
+        self._cb_banner: Optional[QLabel] = None
+        self._cb_countdown_timer: Optional[QTimer] = None
+        self._subscribe_circuit_breaker_events()
+
+    # ── Circuit breaker event subscription ───────────────────────────────
+    def _subscribe_circuit_breaker_events(self):
+        """Subscribe to circuit_breaker.state_change events from the event bus."""
+        try:
+            from agentmain.event_bus import subscribe as eb_subscribe
+            eb_subscribe("circuit_breaker.state_change", self._on_circuit_breaker_change)
+        except Exception:
+            logger.debug("Circuit breaker event subscription skipped", exc_info=True)
+
+    def _on_circuit_breaker_change(self, data: dict):
+        """Handle circuit breaker state change events (called from any thread)."""
+        try:
+            new_state = data.get("new_state", "")
+            provider = data.get("provider", "unknown")
+            if new_state == "open":
+                # Schedule on the Qt thread
+                QTimer.singleShot(0, lambda: self._show_circuit_breaker_banner(provider, data))
+            elif new_state == "closed":
+                QTimer.singleShot(0, self._hide_circuit_breaker_banner)
+        except Exception:
+            logger.debug("Circuit breaker event handling failed", exc_info=True)
+
+    def _show_circuit_breaker_banner(self, provider: str, data: dict):
+        """Show a banner indicating the circuit breaker is open."""
+        try:
+            from i18n import t as _t
+        except ImportError:
+            _t = lambda k, *a, **kw: k
+
+        if self._cb_banner is None:
+            self._cb_banner = QLabel()
+            self._cb_banner.setAlignment(Qt.AlignCenter)
+            self._cb_banner.setStyleSheet(
+                "QLabel { background: rgba(239,68,68,0.85); color: white;"
+                " padding: 4px 12px; font-size: 12px; font-weight: 600;"
+                " border-radius: 4px; }"
+            )
+            # Insert banner at the top of the chat page
+            self._chat_page.msg_layout.insertWidget(0, self._cb_banner)
+
+        self._cb_banner.setText(_t("circuit_breaker.open_banner", provider))
+        self._cb_banner.show()
+
+        # Start countdown timer
+        if self._cb_countdown_timer is not None:
+            self._cb_countdown_timer.stop()
+        self._cb_countdown_start = time.time()
+        self._cb_recovery_timeout = 60.0  # default
+        self._cb_countdown_timer = QTimer(self)
+        self._cb_countdown_timer.timeout.connect(
+            lambda: self._update_cb_countdown(provider)
+        )
+        self._cb_countdown_timer.start(1000)
+
+    def _update_cb_countdown(self, provider: str):
+        """Update the circuit breaker banner countdown."""
+        try:
+            from i18n import t as _t
+        except ImportError:
+            _t = lambda k, *a, **kw: k
+
+        if self._cb_banner is None:
+            return
+        elapsed = time.time() - getattr(self, '_cb_countdown_start', time.time())
+        remaining = max(0, getattr(self, '_cb_recovery_timeout', 60.0) - elapsed)
+        if remaining <= 0:
+            self._hide_circuit_breaker_banner()
+            return
+        self._cb_banner.setText(
+            _t("circuit_breaker.open_banner_countdown", provider, remaining)
+        )
+
+    def _hide_circuit_breaker_banner(self):
+        """Hide the circuit breaker banner when the circuit closes."""
+        if self._cb_countdown_timer is not None:
+            self._cb_countdown_timer.stop()
+            self._cb_countdown_timer = None
+        if self._cb_banner is not None:
+            self._cb_banner.hide()
+
+    # ── Properties (compat main) ──────────────────────────────────────────
+    @property
+    def autonomous_enabled(self): return self._session_mgr.autonomous_enabled
+    @property
+    def last_reply_time(self): return self._session_mgr.last_reply_time
+
+    # ── Window events ─────────────────────────────────────────────────────
+    def paintEvent(self, _):
+        p = QPainter(self); p.setRenderHint(QPainter.Antialiasing)
+        path = QPainterPath(); path.addRect(0.5, 0.5, self.width()-1.0, self.height()-1.0)
+        grad = QLinearGradient(0, 0, 0, self.height())
+        grad.setColorAt(0.0, QColor(20,20,28,228)); grad.setColorAt(1.0, QColor(10,10,14,242))
+        p.fillPath(path, grad); p.setPen(QPen(QColor(99,102,241,80), 1.0)); p.drawPath(path)
+
+    def resizeEvent(self, ev):
+        path = QPainterPath(); path.addRect(0, 0, float(self.width()), float(self.height()))
+        self.setMask(QRegion(path.toFillPolygon().toPolygon())); super().resizeEvent(ev)
+
+    # ── UI construction ───────────────────────────────────────────────────
+    def _build_ui(self):
+        root = QVBoxLayout(self); root.setContentsMargins(0,0,0,0); root.setSpacing(0)
+        root.addWidget(self._build_titlebar()); root.addWidget(_Separator())
+        root.addWidget(self._build_tabbar()); root.addWidget(_Separator())
+        self._stack = QStackedWidget(); self._stack.setStyleSheet("background:transparent;")
+        self._chat_page = ChatPage()
+        self._history_page = HistoryPage()
+        self._sop_page = SOPPage()
+        self._settings_page = SettingsPage()
+        for p in (self._chat_page, self._history_page, self._sop_page, self._settings_page):
+            self._stack.addWidget(p)
+        root.addWidget(self._stack); root.addWidget(self._build_statusbar())
+        self._settings_page.set_model_info(self._model_name(), self.agent.llm_no, self.agent.llmclients)
+        self._chat_page.set_input_event_filter(self)
+        self._switch_tab(0)
+
+        # Phase 7: Command Palette
+        self._command_palette = CommandPalette(self)
+        self._command_palette.command_selected.connect(self._on_command_selected)
+
+        # Phase 7: Ctrl+K shortcut for command palette
+        ctrl_k = QShortcut(QKeySequence("Ctrl+K"), self)
+        ctrl_k.activated.connect(self._command_palette.show_palette)
+
+    def _connect_signals(self):
+        cp, hp, sp = self._chat_page, self._history_page, self._settings_page
+        cp.send_message.connect(self._handle_send)
+        cp.stop_stream.connect(self._do_stop)
+        cp.regenerate_response.connect(self._regenerate_response)
+        cp.files_dropped.connect(self._on_files_dropped)
+        hp.restore_session.connect(self._restore_session)
+        hp.delete_session.connect(self._delete_session)
+        sp.switch_model.connect(self._do_switch_to)
+        sp.reset_prompt.connect(self._do_reset_prompt)
+        sp.save_session.connect(self._do_save)
+        sp.clear_conversation.connect(self._do_clear)
+        sp.toggle_autonomous.connect(self._do_toggle_auto)
+        sp.trigger_autonomous.connect(self._do_trigger_auto)
+
+    # ── Titlebar (search + window controls) ───────────────────────────────
+    def _build_titlebar(self):
+        bar = QWidget(); bar.setFixedHeight(48)
+        bar.setStyleSheet("background:transparent;"); bar.setCursor(QCursor(Qt.SizeAllCursor))
+        ly = QHBoxLayout(bar); ly.setContentsMargins(16,0,10,0); ly.setSpacing(8)
+
+        # Search toggle
+        sb = QPushButton(); sb.setIcon(_svg_icon("search", _SVG_CHAT, "#a1a1aa"))
+        sb.setIconSize(QSize(16,16)); sb.setFixedSize(26,26)
+        sb.setCursor(QCursor(Qt.PointingHandCursor)); sb.setStyleSheet(_SEARCH_BTN_SS)
+        sb.clicked.connect(self._toggle_search); self._search_btn = sb; ly.addWidget(sb)
+
+        # Search bar (hidden)
+        self._search_widget = QWidget(); self._search_widget.hide()
+        sw = QHBoxLayout(self._search_widget); sw.setContentsMargins(0,0,0,0); sw.setSpacing(6)
+        self._search_input = QLineEdit()
+        self._search_input.setPlaceholderText(t("qt.search_placeholder"))
+        self._search_input.setFixedHeight(26); self._search_input.setStyleSheet(_search_input_ss())
+        self._search_input.setFixedWidth(200)
+        self._search_input.textChanged.connect(self._on_search_changed)
+        self._search_input.installEventFilter(self); sw.addWidget(self._search_input)
+        cs = QPushButton("×"); cs.setFixedSize(26,26); cs.setCursor(QCursor(Qt.PointingHandCursor))
+        cs.setStyleSheet(_CLOSE_SEARCH_SS); cs.clicked.connect(self._hide_search); sw.addWidget(cs)
+        ly.addWidget(self._search_widget); ly.addStretch()
+
+        # Window buttons: minimize, maximize
+        for txt, slot in [("─", self.hide), ("□", self._toggle_maximize)]:
+            b = QPushButton(txt); b.setFixedSize(26,26); b.setCursor(QCursor(Qt.PointingHandCursor))
+            b.setStyleSheet(_WIN_BTN_SS); b.clicked.connect(slot); ly.addWidget(b)
+        self._maxi_btn = ly.itemAt(ly.count()-1).widget()
+
+        # Close
+        cl = QPushButton("×"); cl.setFixedSize(26,26); cl.setCursor(QCursor(Qt.PointingHandCursor))
+        cl.setStyleSheet(_CLOSE_BTN_SS)
+        cl.clicked.connect(lambda: (self.close(), QApplication.instance().quit())); ly.addWidget(cl)
+
+        bar.mousePressEvent = self._tb_press
+        bar.mouseMoveEvent = self._tb_move
+        bar.mouseReleaseEvent = self._tb_release
+        return bar
+
+    # ── Search ────────────────────────────────────────────────────────────
+    def _toggle_search(self):
+        (self._hide_search if getattr(self,"_search_visible",False) else self._show_search)()
+
+    def _show_search(self):
+        self._search_visible = True; self._search_btn.setFixedSize(0,0)
+        self._search_widget.show(); self._search_input.setFocus(); self._search_input.selectAll()
+
+    def _hide_search(self):
+        self._search_visible = False; self._search_btn.setFixedSize(26,26)
+        self._search_widget.hide(); self._search_input.clear()
+        self._chat_page.clear_all_highlights()
+        if self._stack.currentIndex() == 1: self._history_page.reset_search_style()
+
+    def _on_search_changed(self, text):
+        if not text.strip(): self._chat_page.clear_all_highlights(); return
+        kw = text.strip(); idx = self._stack.currentIndex()
+        if idx == 0: self._chat_page.search_current_chat(kw)
+        elif idx == 1: self._history_page.search(kw)
+
+    def _hide_search_if_no_focus(self):
+        if not self._search_input.hasFocus(): self._hide_search()
+
+    # ── Titlebar drag ─────────────────────────────────────────────────────
+    def _tb_press(self, e):
+        if e.button() == Qt.LeftButton: self._drag_pos = e.globalPosition().toPoint() - self.pos()
+    def _tb_move(self, e):
+        if e.buttons() & Qt.LeftButton and self._drag_pos is not None:
+            self.move(e.globalPosition().toPoint() - self._drag_pos)
+    def _tb_release(self, _): self._drag_pos = None
+
+    def _toggle_maximize(self):
+        if self.isMaximized(): self.showNormal(); self._maxi_btn.setText("□")
+        else: self.showMaximized(); self._maxi_btn.setText("❐")
+
+    # ── Statusbar (Phase 7: with AgentStatusBar) ───────────────────────────
+    def _build_statusbar(self):
+        bar = QWidget(); bar.setFixedHeight(24); bar.setStyleSheet("background:transparent;")
+        ly = QHBoxLayout(bar); ly.setContentsMargins(16,0,10,0); ly.setSpacing(8)
+
+        # Phase 7: AgentStatusBar replaces the simple dot
+        self._agent_status = AgentStatusBar()
+        ly.addWidget(self._agent_status)
+
+        self._model_badge = QLabel(self._model_name())
+        self._model_badge.setStyleSheet("color:#a1a1aa;font-size:11px;")
+        self._model_badge.setCursor(QCursor(Qt.PointingHandCursor))
+        self._model_badge.mousePressEvent = lambda e: self._show_model_menu(e)
+        ly.addWidget(self._model_badge)
+        self._streaming_badge = _StreamingBadge(); ly.addWidget(self._streaming_badge)
+        ly.addStretch(); return bar
+
+    def _show_model_menu(self, _):
+        menu = QMenu(self._model_badge); menu.setStyleSheet(_model_menu_ss())
+        for i, client in enumerate(self.agent.llmclients):
+            try: name = client.name or t("qt.model_unknown")
+            except Exception: name = t("qt.model_unknown")
+            menu.addAction(f"{name}  #{i+1}").triggered.connect(lambda _, idx=i: self._do_switch_to(idx))
+        menu.exec(QCursor.pos())
+
+    # ── Tabbar ────────────────────────────────────────────────────────────
+    def _build_tabbar(self):
+        bar = QWidget(); bar.setFixedHeight(40); bar.setStyleSheet("background:rgba(10,10,14,0.6);")
+        ly = QHBoxLayout(bar); ly.setContentsMargins(12,5,12,5); ly.setSpacing(4)
+        self._tabs = []
+        for svg, txt_key in [(_SVG_CHAT,"qt.tab_chat"),(_SVG_CLOCK,"qt.tab_history"),(_SVG_BOOK,"qt.tab_sop"),(_SVG_GEAR,"qt.tab_settings")]:
+            btn = _TabButton(t(txt_key)); btn.setIcon(_svg_icon(t(txt_key), svg, "#b0b0b8")); btn.setIconSize(QSize(14,14))
+            btn.clicked.connect(lambda _, idx=len(self._tabs): self._switch_tab(idx))
+            ly.addWidget(btn); self._tabs.append(btn)
+        ly.addStretch()
+        nb = QPushButton(t("qt.new_conversation")); nb.setIcon(_svg_icon("plus",_SVG_PLUS,"#a78bfa"))
+        nb.setIconSize(QSize(12,12)); nb.setFixedHeight(27); nb.setStyleSheet(_NEW_SESS_SS)
+        nb.clicked.connect(self._new_session); ly.addWidget(nb); return bar
+
+    def _switch_tab(self, idx):
+        self._stack.setCurrentIndex(idx)
+        for i, btn in enumerate(self._tabs): btn.setChecked(i == idx)
+        if getattr(self,'_search_visible',False): self._hide_search()
+        if idx == 1: self._history_page.refresh()
+        if idx == 2: self._sop_page.refresh()
+        if idx == 3:
+            self._settings_page.refresh_model_style()
+            if not self._settings_health_checked:
+                self._settings_page.start_health_checks(); self._settings_health_checked = True
+
+    # ── Shell security (Phase 7: uses ApprovalDialog) ─────────────────────
+    def _shell_confirm_dialog(self, code, code_type):
+        preview = (code[:120].replace('\n',' ')+'...') if len(code)>120 else code
+        # Determine risk level based on code_type and patterns
+        risk_level = "medium"
+        dangerous_patterns = ["rm -rf", "del /", "format ", "shutdown", "mkfs"]
+        for pat in dangerous_patterns:
+            if pat in code.lower():
+                risk_level = "high"
+                break
+
+        result = ApprovalDialog.ask(
+            title=t("qt.shell_confirm_title", code_type),
+            description=t("qt.shell_confirm_desc"),
+            code_preview=preview,
+            risk_level=risk_level,
+            code_type=code_type,
+            parent=self,
+        )
+        return result in (APPROVAL_ALLOW, APPROVAL_ALWAYS_ALLOW)
+
+    # ── Phase 7: Stream callbacks for tool/thinking events ────────────────
+    def _on_tool_call(self, event: dict):
+        """Handle tool_call event from the stream handler."""
+        name = event.get("name", "unknown")
+        args = event.get("args", {})
+        tid = event.get("id", "")
+        # Build a short summary of args
+        import json
+        args_summary = json.dumps(args, ensure_ascii=False)
+        if len(args_summary) > 80:
+            args_summary = args_summary[:77] + "..."
+        widget = self._chat_page.add_tool_call(name, args_summary, "pending")
+        if tid:
+            self._active_tool_calls[tid] = widget
+        self._agent_status.set_status("acting")
+
+    def _on_tool_result(self, event: dict):
+        """Handle tool_result event from the stream handler."""
+        tid = event.get("id", "")
+        status = event.get("status", "success")
+        data = event.get("data", "")
+        name = event.get("name", "")
+        # Find the corresponding widget
+        widget = self._active_tool_calls.pop(tid, None)
+        if widget:
+            widget.set_status(status, data or "")
+        else:
+            # Create a new widget if we didn't track the call
+            self._chat_page.add_tool_call(name, "", status, data or "")
+
+        # Update status
+        if not self._active_tool_calls:
+            self._agent_status.set_status("streaming")
+
+    def _on_thinking_start(self, event: dict):
+        """Handle thinking_start event from the stream handler."""
+        self._agent_status.set_status("thinking")
+        # We'll create the section on thinking_end when we have the content
+        self._thinking_start_time = time.time()
+
+    def _on_thinking_end(self, event: dict):
+        """Handle thinking_end event from the stream handler."""
+        content = event.get("content", "")
+        duration = event.get("duration")
+        if duration is None and hasattr(self, '_thinking_start_time'):
+            duration = time.time() - self._thinking_start_time
+        if content:
+            self._chat_page.add_thinking_section(content, duration)
+        self._agent_status.set_status("streaming")
+
+    # ── Phase 7: Command Palette handler ──────────────────────────────────
+    def _on_command_selected(self, action_id: str):
+        """Handle command selection from the command palette."""
+        actions = {
+            "new_conversation": self._new_session,
+            "clear_conversation": self._do_clear,
+            "switch_chat": lambda: self._switch_tab(0),
+            "switch_history": lambda: self._switch_tab(1),
+            "switch_sop": lambda: self._switch_tab(2),
+            "switch_settings": lambda: self._switch_tab(3),
+            "toggle_autonomous": self._do_toggle_auto,
+            "open_settings": lambda: self._switch_tab(3),
+            "toggle_theme": self._do_toggle_theme,
+            "switch_model": lambda: self._show_model_menu(None),
+        }
+        handler = actions.get(action_id)
+        if handler:
+            handler()
+
+    def _do_toggle_theme(self):
+        """Toggle between dark and light themes."""
+        current = current_theme_name()
+        if current == "dark":
+            new_theme = "light"
+        else:
+            new_theme = "dark"
+        apply_theme(QApplication.instance(), new_theme)
+
+    # ── Phase 7: Files dropped handler ────────────────────────────────────
+    def _on_files_dropped(self, file_paths: list):
+        """Handle files dropped onto the chat page."""
+        pass  # Files are already added to pending_files in ChatPage
+
+    # ── Stream callbacks ──────────────────────────────────────────────────
+    def _on_stream_chunk(self, text):
+        self._session_mgr.streaming_text = text; self._session_mgr.is_streaming = True
+        if self._chat_page.streaming_row: self._chat_page.streaming_row.set_text(text + " ▌")
+        self._chat_page.scroll_bottom(); self._update_token_usage()
+
+    def _on_stream_done(self, final_text, is_interrupted=False):
+        self._session_mgr.streaming_text = final_text; self._session_mgr.is_streaming = False
+
+        # Phase 7: Check for thinking tags in the response
+        clean_text, thinking_content = _extract_thinking(final_text)
+        if thinking_content:
+            self._chat_page.add_thinking_section(thinking_content)
+            final_text = clean_text
+
+        if self._chat_page.streaming_row:
+            self._chat_page.streaming_row.set_text(final_text)
+            self._chat_page.streaming_row.set_finished(True)
+            # Mark interrupted messages with distinct visual style
+            if is_interrupted:
+                self._chat_page.streaming_row.set_interrupted_style()
+            self._chat_page.streaming_row = None
+        self._chat_page.set_send_mode(); self._chat_page.hide_streaming_badge()
+        self._streaming_badge.hide(); self._poll_timer.stop()
+        self._agent_status.set_status("idle")
+        if is_interrupted:
+            # Add to history with is_interrupted flag so it's visible in UI
+            # but excluded from LLM context
+            self._session_mgr.add_message("assistant", final_text, is_interrupted=True)
+            self._manual_stop = False; self._update_token_usage()
+        else:
+            self._session_mgr.add_message("assistant", final_text)
+            self._session_mgr.auto_save(); self._update_token_usage()
+            self._chat_page.scroll_bottom()
+            # Task 9.1.3: Desktop notification when app is not in foreground
+            self._notify_if_background("GenericAgent", t("qt.notify_response_done"))
+
+    def _poll_queue(self):
+        self._stream_handler.poll_queue()
+
+    # ── Event handlers ────────────────────────────────────────────────────
+    def _handle_send(self, text, files):
+        if not text and not files: return
+        prompt = text or t("qt.analyze_files")
+        _, display_prompt, _ = _build_prompt_with_uploads(prompt, files)
+        self._session_mgr.add_message("user", display_prompt)
+        self._chat_page.add_msg_row("user", display_prompt)
+        self._update_token_usage()
+        # Start streaming
+        self._chat_page.is_user_scrolled_up = False
+        row = self._chat_page.add_msg_row("assistant", "▌"); row.set_finished(False)
+        self._chat_page.set_stop_mode(); self._chat_page.show_streaming_badge()
+        self._streaming_badge.show()
+        self._agent_status.set_status("streaming")
+        self._stream_handler.start_stream(self.agent, prompt, files)
+        self._poll_timer.start(StreamHandler.POLL_INTERVAL_MS)
+
+    def _do_stop(self):
+        self._manual_stop = True; self._poll_timer.stop()
+        self._stream_handler.stop_stream(self.agent)
+        self._agent_status.set_status("idle")
+
+    def _regenerate_response(self):
+        if self._stream_handler.is_streaming: return
+        last = self._session_mgr.get_last_user_message()
+        if last:
+            self._chat_page.clear_input(); self._chat_page.clear_pending_files()
+            self._handle_send(last, [])
+
+    def _do_switch_to(self, idx):
+        if idx == self.agent.llm_no: return
+        self.agent.next_llm(n=idx); name = self._model_name()
+        self._model_badge.setText(name)
+        self._settings_page.update_current_model(name, self.agent.llm_no)
+        self._chat_page.add_system_notice(t("qt.switched_model", name))
+
+    def _do_save(self): self._session_mgr.save_session()
+
+    def _do_clear(self):
+        self._session_mgr.clear_session(); self._chat_page.clear_messages()
+        self._switch_tab(0); self._update_token_usage()
+
+    def _new_session(self):
+        self._session_mgr.new_session(); self._chat_page.clear_messages()
+        self._switch_tab(0); self._update_token_usage()
+
+    def _do_toggle_auto(self):
+        self._session_mgr.toggle_autonomous()
+        self._settings_page.autonomous_enabled = self._session_mgr.autonomous_enabled
+
+    def _do_trigger_auto(self):
+        self.inject_message(t("qt.auto_trigger"))
+
+    def _do_reset_prompt(self):
+        try: self.agent.llmclient.last_tools = ""
+        except Exception: logger.debug("Failed to reset prompt tools", exc_info=True)
+
+    # ── Session restore / delete ──────────────────────────────────────────
+    def _restore_session(self, session_dict):
+        msgs = self._session_mgr.restore_session(session_dict)
+        if msgs is not None:
+            self._chat_page.clear_messages()
+            for m in msgs: self._chat_page.add_msg_row(m["role"], m["content"])
+            self._switch_tab(0); self._update_token_usage()
+            st = self._search_input.text().strip()
+            if st: QTimer.singleShot(50, lambda: self._chat_page.search_current_chat(st))
+
+    def _delete_session(self, session_id): self._session_mgr.delete_session(session_id)
+
+    # ── Utilities ─────────────────────────────────────────────────────────
+    def _update_token_usage(self):
+        self._chat_page.update_token_label(self._session_mgr.get_token_label())
+
+    def _model_name(self):
+        try: return self.agent.get_llm_name()
+        except Exception: return t("qt.model_unknown")
+
+    def inject_message(self, text):
+        """Programmatic send (called by idle monitor)."""
+        self._chat_page.clear_input(); self._chat_page.clear_pending_files()
+        self._handle_send(text, [])
+
+    # ── Desktop notifications (Task 9.1.3) ────────────────────────────────
+
+    def _notify_if_background(self, title: str, message: str) -> None:
+        """Show a desktop notification when the app is not in the foreground.
+
+        Uses QSystemTrayIcon.showMessage() for native OS notifications.
+        Only notifies when the window is minimized or not the active window,
+        to avoid distracting the user when they are already looking at the app.
+
+        Args:
+            title: Notification title.
+            message: Notification body text.
+        """
+        try:
+            # Only notify if the app is not the active/foreground window
+            app = QApplication.instance()
+            if app is None:
+                return
+
+            is_minimized = self.isMinimized() if hasattr(self, 'isMinimized') else False
+            active_window = app.activeWindow()
+            is_foreground = active_window is not None and self.isAncestorOf(active_window)
+
+            if is_minimized or not is_foreground:
+                # Find the tray icon to send the notification
+                tray = self._find_tray_icon()
+                if tray is not None:
+                    tray.showMessage(title, message, QSystemTrayIcon.MessageIcon.Information, 3000)
+        except Exception:
+            logger.debug("Desktop notification failed", exc_info=True)
+
+    def _find_tray_icon(self) -> Optional[QSystemTrayIcon]:
+        """Find the system tray icon instance from the main() scope.
+
+        Walks up the object hierarchy to find a TrayManager or
+        QSystemTrayIcon. Returns None if not found.
+        """
+        try:
+            # The tray is typically created in main() — try to find it
+            app = QApplication.instance()
+            if app is None:
+                return None
+            # Check for TrayManager's internal tray icon
+            for obj in app.children():
+                if isinstance(obj, QSystemTrayIcon):
+                    return obj
+            # Try the TrayManager class which holds a _tray attribute
+            from frontends.qt.tray_icon import TrayManager
+            for obj in app.children():
+                if isinstance(obj, TrayManager) and hasattr(obj, '_tray'):
+                    return obj._tray
+        except Exception:
+            pass
+        return None
+
+    # ── Auto-Update notification ──────────────────────────────────────────
+    def show_update_notification(self, update_info: dict):
+        """Show an update notification banner in the chat panel."""
+        version = update_info.get("version", "unknown")
+        current = update_info.get("current_version", "unknown")
+        self._chat_page.add_system_notice(
+            t("qt.update_available", version, current)
+        )
+        # Add update widget to settings page if available
+        try:
+            if hasattr(self._settings_page, 'set_update_available'):
+                self._settings_page.set_update_available(update_info)
+        except Exception:
+            logger.debug("Failed to set update availability in settings page", exc_info=True)
+
+    # ── Event filter (Enter/Esc) ──────────────────────────────────────────
+    def eventFilter(self, obj, ev):
+        if ev.type() == QEvent.KeyPress:
+            if obj is self._search_input and ev.key() == Qt.Key_Escape:
+                self._hide_search(); return True
+            if (ev.key() in (Qt.Key_Return, Qt.Key_Enter)
+                    and not (ev.modifiers() & Qt.ShiftModifier)
+                    and isinstance(obj, QTextEdit) and self._chat_page.isAncestorOf(obj)):
+                text = self._chat_page.get_input_text()
+                files = self._chat_page.get_pending_files()
+                if text or files:
+                    self._chat_page.clear_input(); self._chat_page.clear_pending_files()
+                    self._handle_send(text, files)
+                return True
+        if ev.type() == QEvent.FocusOut and obj is self._search_input:
+            QTimer.singleShot(50, self._hide_search_if_no_focus)
+        return super().eventFilter(obj, ev)
+
+
+# ══════════════════════════════════════════════════════════════════════
+# Entry point
+# ══════════════════════════════════════════════════════════════════════
+def main():
+    QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    app = QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False); app.setApplicationName("GenericAgent")
+    font = QFont()
+    try: font.setFamilies(["Arial", "Microsoft YaHei"])
+    except Exception: font.setFamily("Microsoft YaHei")
+    font.setPointSize(10); app.setFont(font)
+
+    agent = GeneraticAgent()
+    if agent.llmclient is None:
+        QMessageBox.critical(None, t("qt.llm_not_configured_title"),
+            t("qt.llm_not_configured_msg"))
+    else:
+        import threading; threading.Thread(target=agent.run, daemon=True).start()
+
+    panel = ChatPanel(agent)
+    button = FloatingButton(panel); button.show()
+    button._position_panel(); panel.show()
+
+    # Phase 7: System tray
+    tray = TrayManager()
+    tray.show_panel.connect(panel.show)
+    tray.show_panel.connect(panel.raise_)
+    tray.new_conversation.connect(panel._new_session)
+    tray.toggle_autonomous.connect(panel._do_toggle_auto)
+    tray.quit_app.connect(lambda: (panel.close(), QApplication.instance().quit()))
+    tray.show()
+
+    scr = QApplication.primaryScreen().availableGeometry()
+    print("[GenericAgent]", t("qt.startup_success"))
+    print(f"  Résolution écran: {scr.width()}x{scr.height()}")
+    print(f"  Bouton flottant: ({button.x()}, {button.y()})")
+    print(f"  Panneau de chat: ({panel.x()}, {panel.y()})")
+    print(f"  Après fermeture, cliquez sur le bouton lumineux en bas à droite pour rouvrir")
+
+    _last_trigger = [0.0]
+    def idle_check():
+        if not panel.autonomous_enabled: return
+        now = time.time()
+        if now - _last_trigger[0] < 120: return
+        if now - panel.last_reply_time > 1800:
+            _last_trigger[0] = now
+            panel.inject_message(
+                t("qt.auto_idle"))
+    idle_timer = QTimer(); idle_timer.timeout.connect(idle_check); idle_timer.start(5000)
+    sys.exit(app.exec())
+
+# ══════════════════════════════════════════════════════════════════════
+#  GenericAgentWindow — Full desktop window for bundled app
+#  (as opposed to the floating ChatPanel + FloatingButton combo)
+# ══════════════════════════════════════════════════════════════════════
+class GenericAgentWindow(QWidget):
+    """Full desktop window wrapping ChatPanel for the bundled Windows app."""
+
+    def __init__(self):
+        super().__init__()
+        self.agent = GeneraticAgent()
+        set_shell_confirm_callback(self._shell_confirm_dialog)
+
+        # Window setup
+        self.setWindowTitle("GenericAgent")
+        self.setMinimumSize(960, 600)
+        self.resize(1280, 800)
+
+        is_bundled = getattr(sys, 'frozen', False)
+        if is_bundled:
+            icon_path = os.path.join(sys._MEIPASS, 'assets', 'images', 'logo.jpg')
+        else:
+            icon_path = os.path.join(os.path.dirname(__file__), '..', 'assets', 'images', 'logo.jpg')
+
+        if os.path.exists(icon_path):
+            from PySide6.QtGui import QIcon
+            self.setWindowIcon(QIcon(icon_path))
+
+        # Layout
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+
+        # Create the chat panel (reuse existing component)
+        self._panel = ChatPanel(self.agent)
+        # Remove the floating/frameless flags for embedded mode
+        self._panel.setWindowFlags(Qt.Widget)
+        self._panel.setAttribute(Qt.WA_TranslucentBackground, False)
+        layout.addWidget(self._panel)
+
+        # Start agent background thread
+        if self.agent.llmclient is not None:
+            import threading
+            threading.Thread(target=self.agent.run, daemon=True).start()
+
+        # System tray
+        self._tray = TrayManager()
+        self._tray.show_panel.connect(self.show)
+        self._tray.show_panel.connect(self.raise_)
+        self._tray.new_conversation.connect(self._panel._new_session)
+        self._tray.toggle_autonomous.connect(self._panel._do_toggle_auto)
+        self._tray.quit_app.connect(self._quit_app)
+        self._tray.show()
+
+        # Auto-update check
+        try:
+            from agentmain.auto_update import check_and_notify_async
+            def on_update(info):
+                if info:
+                    self._panel.show_update_notification(info)
+            check_and_notify_async(on_update)
+        except Exception:
+            logger.debug("Auto-update check failed", exc_info=True)
+
+    def _shell_confirm_dialog(self, code, code_type):
+        return self._panel._shell_confirm_dialog(code, code_type)
+
+    def _quit_app(self):
+        self.close()
+        QApplication.instance().quit()
+
+    def closeEvent(self, event):
+        """Minimize to tray instead of closing."""
+        self.hide()
+        event.ignore()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,242 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   GenericAgent Dark Theme — QSS Template
+   
+   Placeholders: {{placeholder_name}} are filled by theme.py at runtime.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Global ─────────────────────────────────────────────────────────────── */
+QWidget {
+    background: {{bg}};
+    color: {{text}};
+    font-family: "Arial", "Microsoft YaHei", sans-serif;
+}
+
+QFrame {
+    background: {{panel}};
+    border: none;
+}
+
+/* ── Labels ─────────────────────────────────────────────────────────────── */
+QLabel {
+    background: transparent;
+    color: {{text}};
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+QPushButton {
+    background: transparent;
+    color: {{text}};
+    border: none;
+    border-radius: 8px;
+    padding: 0 14px;
+    font-size: 12px;
+    font-weight: 700;
+}
+QPushButton:hover {
+    background: {{btn_hover}};
+    color: {{text}};
+}
+QPushButton:pressed {
+    background: {{btn_active}};
+}
+QPushButton:disabled {
+    color: {{muted}};
+}
+
+/* ── Line Edit ──────────────────────────────────────────────────────────── */
+QLineEdit {
+    background: {{input_bg}};
+    border: 1px solid {{border}};
+    border-radius: 13px;
+    color: {{text}};
+    font-size: 13px;
+    padding: 0 10px;
+}
+QLineEdit::placeholder {
+    color: {{muted}};
+}
+QLineEdit:focus {
+    border-color: {{accent}};
+}
+
+/* ── Text Edit / Text Browser ──────────────────────────────────────────── */
+QTextEdit {
+    background: transparent;
+    color: {{text}};
+    border: none;
+}
+QTextBrowser {
+    background: transparent;
+    color: {{text}};
+    border: none;
+}
+
+/* ── Scroll Bar ─────────────────────────────────────────────────────────── */
+QScrollBar:vertical {
+    width: 5px;
+    background: transparent;
+    border: none;
+}
+QScrollBar::handle:vertical {
+    background: {{scrollbar_handle}};
+    border-radius: 2px;
+    min-height: 20px;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0;
+}
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+QScrollBar:horizontal {
+    height: 5px;
+    background: transparent;
+    border: none;
+}
+QScrollBar::handle:horizontal {
+    background: {{scrollbar_handle}};
+    border-radius: 2px;
+    min-width: 20px;
+}
+
+/* ── Menu ───────────────────────────────────────────────────────────────── */
+QMenu {
+    background: {{panel}};
+    border: 1px solid {{border}};
+    padding: 4px 0;
+}
+QMenu::item {
+    color: {{text}};
+    padding: 6px 20px 6px 12px;
+    font-size: 12px;
+}
+QMenu::item:selected {
+    background: {{accent_hover}};
+}
+QMenu::separator {
+    height: 1px;
+    background: {{border}};
+    margin: 4px 8px;
+}
+
+/* ── List Widget ────────────────────────────────────────────────────────── */
+QListWidget {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: {{text}};
+}
+QListWidget::item {
+    color: {{muted}};
+    padding: 7px 10px;
+    border-radius: 4px;
+    margin: 1px 4px;
+}
+QListWidget::item:hover {
+    background: {{card_bg}};
+    color: {{text}};
+}
+QListWidget::item:selected {
+    background: {{accent_hover}};
+    color: white;
+}
+
+/* ── Combo Box ──────────────────────────────────────────────────────────── */
+QComboBox {
+    background: {{input_bg}};
+    border: 1px solid {{border}};
+    border-radius: 6px;
+    color: {{text}};
+    padding: 4px 10px;
+    font-size: 12px;
+}
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+}
+QComboBox QAbstractItemView {
+    background: {{panel}};
+    border: 1px solid {{border}};
+    color: {{text}};
+    selection-background-color: {{accent_hover}};
+}
+
+/* ── Check Box / Radio Button ──────────────────────────────────────────── */
+QCheckBox, QRadioButton {
+    color: {{text}};
+    spacing: 8px;
+    background: transparent;
+}
+QCheckBox::indicator, QRadioButton::indicator {
+    width: 16px;
+    height: 16px;
+}
+
+/* ── Progress Bar ───────────────────────────────────────────────────────── */
+QProgressBar {
+    background: {{border}};
+    border: none;
+    border-radius: 4px;
+    height: 6px;
+    text-align: center;
+}
+QProgressBar::chunk {
+    background: {{accent}};
+    border-radius: 4px;
+}
+
+/* ── Tool Tip ───────────────────────────────────────────────────────────── */
+QToolTip {
+    background: {{panel}};
+    color: {{text}};
+    border: 1px solid {{border}};
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* ── Tab Bar ────────────────────────────────────────────────────────────── */
+QTabBar::tab {
+    background: transparent;
+    color: {{muted}};
+    border: none;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+}
+QTabBar::tab:selected {
+    color: {{text}};
+    background: {{card_bg}};
+    border-radius: 8px;
+}
+QTabBar::tab:hover {
+    background: {{border_light}};
+    color: {{text}};
+}
+
+/* ── Spin Box ───────────────────────────────────────────────────────────── */
+QSpinBox {
+    background: {{input_bg}};
+    border: 1px solid {{border}};
+    border-radius: 6px;
+    color: {{text}};
+    padding: 4px 8px;
+}
+
+/* ── Slider ─────────────────────────────────────────────────────────────── */
+QSlider::groove:horizontal {
+    background: {{border}};
+    height: 4px;
+    border-radius: 2px;
+}
+QSlider::handle:horizontal {
+    background: {{accent}};
+    width: 14px;
+    height: 14px;
+    margin: -5px 0;
+    border-radius: 7px;
+}
+QSlider::sub-page:horizontal {
+    background: {{accent}};
+    border-radius: 2px;
+}

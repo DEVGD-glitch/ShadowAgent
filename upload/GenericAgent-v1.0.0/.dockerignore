@@ -1,0 +1,71 @@
+# ══════════════════════════════════════════════════════════════════════════════
+#  GenericAgent — Docker Ignore
+#  Excludes files not needed in the Docker image
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Version control
+.git
+.gitignore
+
+# CI/CD
+.github/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Build artifacts
+build/
+dist/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Test & coverage
+tests/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+coverage.xml
+.coverage
+
+# Pre-commit
+.pre-commit-config.yaml
+
+# Documentation
+*.md
+!README.md
+LICENSE
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Runtime data
+temp/
+tmp/
+workspace/
+*.log
+tasks/
+sche_tasks/
+
+# Sensitive files
+mykey.py
+auth.json
+
+# Streamlit
+.streamlit/

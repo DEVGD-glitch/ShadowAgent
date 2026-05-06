@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/tmp"],
+      "disabled": true,
+      "_comment": "Enable to access filesystem via MCP. Change /tmp to your preferred directory."
+    },
+    "github": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "YOUR_GITHUB_TOKEN_HERE"
+      },
+      "disabled": true,
+      "_comment": "Enable for GitHub integration. Requires GITHUB_TOKEN env var."
+    },
+    "fetch": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-fetch"],
+      "disabled": true,
+      "_comment": "Enable for web fetching capabilities via MCP."
+    }
+  }
+}

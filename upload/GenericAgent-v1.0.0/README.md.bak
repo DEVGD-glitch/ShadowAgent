@@ -1,0 +1,858 @@
+<div align="center">
+<img src="assets/images/bar.jpg" width="880"/>
+
+<a href="https://trendshift.io/repositories/25944" target="_blank"><img src="https://trendshift.io/api/badge/repositories/25944" alt="lsdefine%2FGenericAgent | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+
+</div>
+
+<p align="center">
+  <a href="#english">English</a> | <a href="#chinese">中文</a> | <a href="#french">Français</a> | 📄 Technical Report:&nbsp;<a href="https://arxiv.org/abs/2604.17091"><img src="https://img.shields.io/badge/arXiv-2604.17091-b31b1b?logo=arxiv&logoColor=white" alt="arXiv" height="18"/></a>&nbsp;<a href="assets/GenericAgent_Technical_Report.pdf"><img src="https://img.shields.io/badge/-PDF-EA4335?logo=adobeacrobatreader&logoColor=white" alt="Technical Report PDF" height="18"/></a>&nbsp;<a href="https://github.com/JinyiHan99/GA-Technical-Report"><img src="https://img.shields.io/badge/-Code%20%26%20Data-181717?logo=github&logoColor=white" alt="Experiments & Reproduction Repo" height="18"/></a> | 📘 <a href="https://datawhalechina.github.io/hello-generic-agent/">教程</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-0.6.0-blue" alt="Version 0.6.0"/>
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"/>
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"/>
+</p>
+
+---
+<a name="english"></a>
+
+## What is GenericAgent?
+
+**GenericAgent** is a self-evolving AI agent that controls your computer. You give it a task in plain language — it figures out how to do it, executes it, and remembers how for next time.
+
+Unlike chatbots that just talk, GenericAgent **acts**: it can browse the web, run code, read and write files, and interact with desktop applications. And unlike most agent frameworks that require extensive setup and programming, GenericAgent is designed to **grow its own capabilities** over time — the more you use it, the more skilled it becomes.
+
+### How is it different?
+
+| | GenericAgent | ChatGPT / Claude | AutoGPT / CrewAI |
+|---|---|---|---|
+| **Can act on your computer** | Yes — browser, terminal, files | No — text only | Varies |
+| **Remembers across sessions** | Yes — layered memory + auto-crystallization | No — stateless | Partial |
+| **Gets better over time** | Yes — crystallizes skills automatically | No | Manual plugins |
+| **Setup complexity** | `python start.py` — one command | Web signup | Complex config |
+| **Token efficiency** | <30K context window | Full context | 200K–1M tokens |
+| **Multi-LLM** | Claude, GPT, Gemini, DeepSeek, Ollama | Locked to one | Varies |
+| **MCP support** | Built-in client + server | No / partial | No |
+
+## Quick Start
+
+### One Command — That's It
+
+```bash
+git clone https://github.com/lsdefine/GenericAgent.git
+cd GenericAgent
+python start.py
+```
+
+That's the entire setup. `start.py` does everything:
+
+1. **Checks dependencies** — auto-installs any missing Python packages
+2. **Runs setup wizard** — asks your language, AI provider, and API key (first time only)
+3. **Launches the best UI** — Qt desktop app if available, otherwise Streamlit web, otherwise terminal
+
+> **Requirements**: Python 3.10+ and an internet connection. That's all.
+>
+> **API key needed**: You'll need at least one LLM API key (Anthropic, OpenAI, Google Gemini, DeepSeek, or a local Ollama instance). The setup wizard will guide you.
+
+### Other Ways to Start
+
+| Method | Command | Best For |
+|--------|---------|----------|
+| **Auto (recommended)** | `python start.py` | Everyone — first time and beyond |
+| **Reconfigure** | `python start.py --configure` | Change API key, provider, or language |
+| **Terminal mode** | `python start.py --cli` | Headless servers, scripting |
+| **API server** | `python start.py --server` | Integration with other apps |
+| **Service hub** | `python start.py --hub` | Managing multiple frontends |
+| **Qt desktop** | `python frontends/qtapp.py` | Desktop users with PySide6 installed |
+| **Docker** | `docker build -t genericagent . && docker run -e LLM_API_KEY=sk-... genericagent` | Deployment |
+
+### First Time Setup
+
+When you run `python start.py` for the first time, you'll see:
+
+```
+============================================================
+  Welcome to GenericAgent
+============================================================
+
+>> Checking dependencies...
+>> Installing PySide6...
+>> All dependencies are installed
+
+============================================================
+  First run detected — setup required
+============================================================
+
+  Choose language:
+    1) Francais
+    2) English
+    3) 中文
+  [1-3]: 2
+
+  Which AI provider do you use?
+    1) Anthropic Claude
+    2) OpenAI GPT
+    3) Google Gemini
+    4) DeepSeek
+    5) Local model (Ollama)
+    6) Multiple providers (auto-failover)
+    7) I'll configure later
+  [1-7]: 1
+
+  Enter your Anthropic API key (or Enter to skip):
+  API Key: sk-ant-...
+
+>> Configuration saved!
+>> Qt detected — launching graphical interface
+```
+
+## What Can It Do?
+
+GenericAgent gives an LLM **9 atomic tools** to control your computer:
+
+| Tool | What it does |
+|------|-------------|
+| `code_run` | Execute Python code in a sandbox |
+| `file_read` | Read any file on your system |
+| `file_write` | Write or create files |
+| `file_patch` | Modify existing files (find & replace) |
+| `web_scan` | Read web page content through a real browser |
+| `web_execute_js` | Run JavaScript in the browser (click, type, scroll) |
+| `ask_user` | Ask you a question when unsure |
+
+Plus 2 **memory management tools** that let it save and recall information across sessions.
+
+### Real-World Examples
+
+| What you say | What GenericAgent does |
+|---|---|
+| "Read my WeChat messages" | Installs dependencies, reverses the database, writes a read script, saves as a skill |
+| "Monitor stocks and alert me when price drops 5%" | Installs market data tools, builds a screening flow, configures scheduled checks, saves as a skill |
+| "Send this file via Gmail" | Configures OAuth, writes a send script, saves as a skill |
+| "Order me a milk tea" | Opens the delivery app in browser, navigates the menu, selects items, completes checkout |
+
+**The first time**, GenericAgent explores, experiments, and figures out how to complete the task. **Every time after**, it recalls the crystallized skill and executes it directly.
+
+## How Self-Evolution Works
+
+This is what makes GenericAgent fundamentally different from other agents:
+
+```
+New Task → Autonomous Exploration (install deps, write scripts, debug)
+         → Crystallize execution path into a reusable Skill
+         → Write to Memory Layer
+         → Direct recall on next similar task
+```
+
+The agent uses a **5-layer memory system**:
+
+| Layer | Purpose |
+|-------|---------|
+| **L0** — Meta Rules | Core behavioral constraints |
+| **L1** — Insight Index | Fast routing index for quick recall |
+| **L2** — Global Facts | Stable long-term knowledge |
+| **L3** — Task Skills / SOPs | Reusable step-by-step procedures |
+| **L4** — Session Archive | Historical task records |
+
+After 15+ conversation turns, the **auto-crystallization engine** automatically:
+1. Triggers skill crystallization of the current execution path
+2. Updates the L1 insight index for fast routing
+3. Persists key information checkpoints to disk
+4. Indexes new skills in the vector store for semantic retrieval
+
+Next time you ask something similar, the agent finds and reuses the skill — **one-line invoke from memory**.
+
+## v0.6.0 — "Big Tech Monster"
+
+Version 0.6.0 extracts the best patterns from 12 open-source AI agent frameworks and unifies them into GenericAgent. Each feature is lazy-loaded (only initialized when you use it) and gracefully degrades if dependencies are missing.
+
+### What's New
+
+| Feature | What it gives you | Inspired by |
+|---------|-------------------|-------------|
+| **StateGraph** | Build structured workflows with nodes, edges, and conditional branching | LangGraph |
+| **MCP Server** | Expose GenericAgent's tools to any MCP-compatible client | MCP Python SDK |
+| **Chroma Memory** | Persistent vector database for semantic memory search | ChromaDB |
+| **Closed Learning Loop** | 5-phase cycle: Discover → Execute → Reflect → Codify → Improve | Hermes Agent |
+| **Progressive Skill Disclosure** | Only show relevant skills to the LLM, reducing noise | Google ADK |
+| **Agent Handoffs** | Route tasks to specialist sub-agents | OpenAI Agents SDK |
+| **Agent-as-Tool** | Use one agent as a tool inside another agent's workflow | OpenAI Agents SDK |
+| **Sandbox Execution** | Run untrusted code in an isolated subprocess | OpenAI Agents SDK |
+| **Input/Output Guardrails** | Automatic validation of user input and agent output | OpenAI Agents SDK |
+| **Extension Lifecycle Hooks** | Plugin system with before/after hooks on agent events | pi-mono |
+| **Context Compaction** | Smart context window management to stay within token limits | pi-mono |
+| **Flow Serialization** | Define agent workflows as JSON graphs | Langflow |
+| **Flow-as-MCP-Server** | Expose a flow as an MCP tool for external consumption | Langflow |
+| **DOM Intelligence** | Parse web pages into indexed interactive elements | Browser-Use |
+| **Browser Agent** | Autonomous web browsing: observe → decide → act | Browser-Use |
+| **Voice Pipeline** | Speech-to-text → LLM → text-to-speech, with FREE providers | AIAvatarKit |
+| **VRM Avatar** | 3D anime/waifu avatar with lip-sync + VRoid Hub | AIAvatarKit / VRoid Hub |
+| **Speech-to-Speech** | Full voice conversation with anime personality | AIAvatarKit |
+| **Free Providers** | 100% free voice pipeline (Groq STT + Edge TTS + Pollinations LLM) | — |
+
+### Free AI Providers — Zero Cost Voice & Chat
+
+GenericAgent supports **completely free** providers for the voice and avatar pipeline. No API key needed for the default configuration:
+
+| Component | Free Provider | Limits | Alternative (also free) |
+|-----------|--------------|--------|------------------------|
+| **STT** (Speech-to-Text) | Groq Whisper | 30 req/min | Pollinations (unlimited), local Whisper |
+| **TTS** (Text-to-Speech) | Edge TTS | Unlimited, 400+ voices | VOICEVOX (anime voices, local), Pollinations |
+| **LLM** (Chat) | Pollinations | Unlimited | Groq (30 req/min), UncloseAI, DeepInfra, OpenRouter |
+
+### Anime Avatar with Personality
+
+Give your agent a waifu/anime identity with VRM avatars from [VRoid Hub](https://hub.vroid.com):
+
+```python
+from agentmain import SpeechToSpeechEngine
+
+# Create a 100% FREE pipeline with anime personality
+engine = SpeechToSpeechEngine.create_free_pipeline(
+    language="ja-JP",       # Japanese for anime
+    personality="waifu",    # or: tsundere, kuudere, dandere, genki, oneesan, loli
+    avatar_path="my_waifu.vrm",
+)
+
+# Text-based interaction (no microphone needed)
+response = engine.process_text("Bonjour !")
+print(response.text)     # The agent's text response
+# response.audio contains the synthesized voice
+# response.expression contains the detected expression
+# response.visemes contains lip-sync data
+
+# Or use individual components
+from agentmain import VoicePipeline, LLMVoiceClient, AvatarController, STTProvider, TTSProvider
+
+# Free STT + TTS
+pipeline = VoicePipeline(stt_provider=STTProvider.GROQ, tts_provider=TTSProvider.EDGE)
+
+# Free LLM with anime personality
+llm = LLMVoiceClient()  # Defaults to Pollinations (free)
+llm.set_personality("tsundere")  # "B-baka! It's not like I care..."
+
+# VRM Avatar with expression tags
+avatar = AvatarController("avatar.vrm")
+text, expression = avatar.parse_expression_tags("Hello [face:joy] !")
+# → text="Hello !", expression="happy"
+```
+
+**Available anime personalities**: waifu, tsundere, kuudere, dandere, genki, oneesan, loli
+
+**VRM Avatar Viewer**: Open `assets/avatar_viewer.html` in a browser for a full 3D VRM viewer with:
+- Drag-and-drop VRM loading
+- Expression control (happy, angry, sad, surprised, etc.)
+- Auto-blink and breathing animation
+- WebSocket connection to GenericAgent for real-time control
+- Direct link to VRoid Hub for downloading avatars
+
+### Using v0.6.0 Features from Python
+
+```python
+from agentmain import GenericAgent
+
+agent = GenericAgent()
+
+# Search memory semantically
+results = agent.search_memory("How did I automate stock screening?")
+
+# Validate input/output
+agent.validate_input("Hello, help me code")  # GuardrailResult(passed=True)
+
+# Build a StateGraph workflow
+graph = agent.build_state_graph()
+graph.add_node("think", think_fn)
+graph.add_node("act", act_fn)
+graph.add_edge("think", "act")
+graph.add_conditional_edges("act", route_fn, {"retry": "think", "done": "__end__"})
+
+# Register an MCP tool
+@agent.register_mcp_tool()
+def search_web(query: str, num: int = 10) -> str:
+    """Search the web."""
+    return do_search(query, num)
+
+# Run the closed learning loop
+result = agent.closed_learning.run_full_cycle("Analyze quarterly sales")
+
+# Enable voice conversation
+agent.enable_voice(stt_provider="google", tts_provider="google")
+
+# Enable 3D avatar
+agent.enable_avatar(avatar_path="my_avatar.vrm")
+
+# Create a flow
+flow = agent.create_flow("research_flow", "Research and summarize a topic")
+```
+
+## Chat Interfaces
+
+GenericAgent supports multiple ways to interact:
+
+### Desktop App (Recommended)
+
+```bash
+python start.py          # Auto-detects and launches the best available UI
+```
+
+The Qt desktop interface features:
+- Real-time tool call visualization with status badges
+- Collapsible reasoning display
+- Animated agent status indicator (6 states)
+- Security approval dialogs for dangerous actions
+- Command palette (Ctrl+K) with fuzzy search
+- Dark, Light, and Catppuccin themes
+- System tray with notifications
+- Drag & drop file support
+
+### Terminal
+
+```bash
+python start.py --cli
+```
+
+Chat commands available in all interfaces:
+- `/new` — Start a fresh conversation
+- `/continue` — List recoverable session snapshots
+- `/continue N` — Restore the Nth session
+
+### Messaging Platforms
+
+GenericAgent can run as a bot on:
+
+| Platform | Setup |
+|----------|-------|
+| **Telegram** | Add `tg_bot_token` to `mykey.py`, run `python frontends/tgapp.py` |
+| **WeChat** | `pip install pycryptodome qrcode`, run `python frontends/wechatapp.py` |
+| **QQ** | Add `qq_app_id`/`qq_app_secret` to `mykey.py`, run `python frontends/qqapp.py` |
+| **Feishu/Lark** | Add `fs_app_id`/`fs_app_secret` to `mykey.py`, run `python frontends/fsapp.py` |
+| **WeCom** | Add `wecom_bot_id`/`wecom_secret` to `mykey.py`, run `python frontends/wecomapp.py` |
+| **DingTalk** | Add `dingtalk_client_id`/`dingtalk_client_secret` to `mykey.py`, run `python frontends/dingtalkapp.py` |
+| **Discord** | Run `python frontends/dcapp.py` |
+
+### API Server
+
+```bash
+python start.py --server    # Starts on http://0.0.0.0:8765
+```
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/chat` | POST | Streaming SSE chat |
+| `/chat/sync` | POST | Synchronous chat |
+| `/ws/chat` | WebSocket | Full-duplex chat |
+| `/tools` | GET | List available tools |
+| `/models` | GET | List LLM models |
+| `/models/switch` | POST | Switch model |
+| `/memory/search` | POST | Semantic memory search |
+| `/status` | GET | Agent status |
+| `/mcp/status` | GET | MCP server status |
+
+## Supported LLM Providers
+
+| Provider | Models | Config Key |
+|----------|--------|------------|
+| **Anthropic** | Claude Sonnet 4, Claude Opus 4 | `native_claude_config` |
+| **OpenAI** | GPT-4o, GPT-5 | `native_oai_config` |
+| **Google** | Gemini 2.5 Pro, Gemma | `google_config` |
+| **DeepSeek** | DeepSeek Chat, DeepSeek Coder | `native_oai_config` (with DeepSeek base URL) |
+| **Local (Ollama)** | Llama 3, Mistral, Qwen, etc. | `native_oai_config` (with Ollama URL) |
+| **Mixin (failover)** | Any combination above | `mixin_config` |
+
+You can configure multiple providers and GenericAgent will automatically fail over if one is down.
+
+## Project Structure
+
+```
+GenericAgent/
+├── start.py                    # ONE command to start everything
+├── configure.py                # CLI configuration wizard
+├── check_dependencies.py       # Dependency checker + auto-installer
+├── hub.pyw                     # Service manager (tkinter)
+├── launch.pyw                  # Streamlit + pywebview launcher
+├── launch_desktop.py           # Qt desktop launcher (PyInstaller-ready)
+│
+├── agentmain/                  # Core agent package
+│   ├── core.py                 # GenericAgent class — main orchestrator
+│   ├── cli.py                  # CLI entry point (interactive/task/reflect modes)
+│   ├── prompts.py              # Tool schemas, system prompts
+│   ├── slash.py                # Slash command handler
+│   ├── handoffs.py             # Agent handoffs + Agent-as-Tool + Sandbox
+│   ├── guardrails.py           # Input/Output validation pipeline
+│   ├── closed_learning.py      # 5-phase learning loop + SkillToolset
+│   ├── extensions.py           # Extension lifecycle hooks + ContextEngine
+│   ├── flow.py                 # Flow graph serialization + Flow-as-MCP
+│   ├── browser_intel.py        # DOM extraction + BrowserAgent
+│   └── voice_avatar.py         # Voice pipeline + VRM avatar + VRoid Hub
+│
+├── ga.py                       # 9 atomic tools + GenericAgentHandler
+├── agent_loop.py               # Agent execution loop
+├── server.py                   # FastAPI + SSE + WebSocket API server
+├── config.py                   # Configuration dataclasses
+├── exceptions.py               # 28-class exception hierarchy
+├── protocols.py                # Protocol definitions
+├── circuit_breaker.py          # LLM call circuit breaker
+├── metrics.py                  # LLM metrics tracking
+├── logging_config.py           # Centralized logging
+├── env_loader.py               # .env file support
+│
+├── llmcore/                    # LLM abstraction layer
+│   ├── clients.py              # Multi-LLM client (Claude, OpenAI, Gemini...)
+│   ├── google_provider.py      # Google AI Studio session
+│   ├── sessions.py             # Session management with failover
+│   ├── parsers.py              # Response parsing
+│   ├── messages.py             # Message format conversion
+│   ├── retry.py                # Exponential backoff + jitter
+│   └── convert.py              # Tool format converters
+│
+├── engine/                     # StateGraph engine
+│   └── state_graph.py          # Graph, nodes, edges, checkpointer
+│
+├── mcp/                        # Model Context Protocol
+│   ├── client.py               # MCP client (stdio/SSE/HTTP)
+│   └── fastmcp.py              # FastMCP server
+│
+├── memory/                     # Layered memory system
+│   ├── crystallization.py      # Auto-crystallization engine
+│   ├── vector/                 # Vector store + RAG + ChromaDB
+│   └── (L0-L4 layers)         # SOPs, skills, session archives
+│
+├── tools/                      # Dynamic tool plugin system
+│   ├── registry.py             # @register_tool decorator
+│   └── validation.py           # JSON Schema validation
+│
+├── plugins/                    # Built-in tool plugins
+│   ├── web_search.py           # DuckDuckGo / SearXNG search
+│   ├── memory_search.py        # Semantic memory search
+│   └── system_tools.py         # System info, directory tree, processes
+│
+├── frontends/                  # UI frontends
+│   ├── qt/                     # Modern Qt desktop UI (modular)
+│   ├── qtapp.py                # Qt app entry point
+│   ├── stapp.py / stapp2.py    # Streamlit web UI
+│   ├── tgapp.py                # Telegram bot
+│   ├── wechatapp.py            # WeChat bot
+│   ├── qqapp.py                # QQ bot
+│   ├── fsapp.py                # Feishu/Lark bot
+│   ├── wecomapp.py             # WeCom bot
+│   ├── dingtalkapp.py          # DingTalk bot
+│   └── dcapp.py                # Discord bot
+│
+├── i18n/                       # Internationalization (EN, FR, ZH)
+├── tests/                      # Test suite
+├── stubs/                      # Type stubs
+└── assets/                     # Static assets
+```
+
+## Configuration
+
+GenericAgent uses a `mykey.py` file in the project root for configuration. This file is auto-generated by the setup wizard, but you can also edit it manually:
+
+```python
+# mykey.py — Auto-generated by start.py
+
+GA_LANG = "en"  # Interface language: en, fr, zh
+
+# Anthropic Claude
+native_claude_config = {
+    'name': 'claude',
+    'apikey': 'sk-ant-your-key-here',
+    'apibase': 'https://api.anthropic.com',
+    'model': 'claude-sonnet-4-6',
+    'thinking_type': 'adaptive',
+}
+
+# OpenAI GPT
+native_oai_config = {
+    'name': 'gpt',
+    'apikey': 'sk-your-key-here',
+    'apibase': 'https://api.openai.com/v1',
+    'model': 'gpt-4o',
+    'api_mode': 'chat_completions',
+}
+
+# Auto-failover between providers
+mixin_config = {
+    'llm_nos': ['claude', 'gpt'],
+    'max_retries': 5,
+    'base_delay': 0.5,
+}
+```
+
+Alternatively, you can use environment variables (see `.env.example`).
+
+## Demo
+
+| 🧋 Food Delivery | 📈 Stock Screening |
+|:---:|:---:|
+| <img src="assets/demo/order_tea.gif" width="100%" alt="Order Tea"> | <img src="assets/demo/selectstock.gif" width="100%" alt="Stock Selection"> |
+| *"Order me a milk tea"* — Navigates the delivery app, selects items, and completes checkout | *"Find GEM stocks with EXPMA golden cross, turnover > 5%"* — Screens stocks with quantitative conditions |
+| 🌐 Autonomous Web Exploration | 💰 Expense Tracking | 💬 Batch Messaging |
+| <img src="assets/demo/autonomous_explore.png" width="100%" alt="Web Exploration"> | <img src="assets/demo/alipay_expense.png" width="100%" alt="Alipay Expense"> | <img src="assets/demo/wechat_batch.png" width="100%" alt="WeChat Batch"> |
+| Autonomously browses and periodically summarizes web content | *"Find expenses over ¥2K in the last 3 months"* — Drives Alipay via ADB | Sends bulk WeChat messages, fully driving the WeChat client |
+
+## FAQ
+
+**Q: Do I need to be a programmer to use GenericAgent?**
+No. The `python start.py` command handles everything. You just need Python 3.10+ and an API key from any LLM provider.
+
+**Q: Which LLM provider should I use?**
+Any will work. Claude and GPT are the most capable; DeepSeek is the most affordable; Ollama is free but requires a powerful GPU. You can configure multiple providers and GenericAgent will fail over automatically.
+
+**Q: Is my data safe?**
+GenericAgent runs entirely on your local machine. API keys are stored locally in `mykey.py`. No data is sent anywhere except to your chosen LLM provider for inference. The browser sessions preserve your login state locally.
+
+**Q: Can I use GenericAgent without a browser?**
+Yes. The browser control is one tool among many. GenericAgent can also work purely through code execution, file operations, and terminal commands.
+
+**Q: What's the difference between GenericAgent and Claude Code / Cursor?**
+Claude Code and Cursor are coding assistants. GenericAgent is a general-purpose computer agent — it can code, but also browse the web, manage files, send messages, and automate any desktop task. It also remembers across sessions and builds skills over time.
+
+**Q: How do I add new capabilities?**
+Just ask GenericAgent to do something new. It will figure out how, and automatically save the procedure as a skill. You can also register custom tools via the plugin system or MCP.
+
+## Changelog
+
+- **v0.6.0** (2026-05-04) — "Big Tech Monster": 18 new features from 12 open-source frameworks — StateGraph, MCP Server, Chroma Memory, Closed Learning, Agent Handoffs, Guardrails, Extensions, Flow, Browser Agent, Voice Pipeline, VRM Avatar
+- **v0.5.0** (2026-05-03) — Auto-crystallization engine, production hardening (52 issues audited, all critical fixed)
+- **v0.4.0** (2026-05-02) — Dynamic tool plugins, MCP client, vector memory/RAG, multi-agent orchestration, FastAPI server, reasoning modes, Qt UI
+- **v0.3.0** (2026-04-21) — Technical report on arXiv, L4 session archives
+- **v1.0** (2026-01-16) — Initial public release
+
+## Support
+
+If this project helped you, please consider leaving a **Star!**
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><strong>WeChat Group 13</strong><br><img src="assets/images/wechat_group13.jpg" alt="WeChat Group 13 QR Code" width="250"/></td>
+    </tr>
+  </table>
+</div>
+
+## Friendly Links
+
+[![LinuxDo](https://img.shields.io/badge/社区-LinuxDo-blue?style=for-the-badge)](https://linux.do/)
+
+## License
+
+MIT License — see [LICENSE](LICENSE)
+
+*Disclaimer: This project does not build or operate any commercial website. Apart from DintalClaw, no institution, organization, or individual is currently officially authorized to conduct commercial activities under the GenericAgent name.*
+
+---
+<a name="chinese"></a>
+
+## GenericAgent 是什么？
+
+**GenericAgent** 是一个自我进化的 AI 代理，可以控制你的电脑。你用自然语言给它一个任务——它会自己弄清楚怎么做、执行，并记住方法以便下次直接使用。
+
+与只会对话的聊天机器人不同，GenericAgent **会行动**：它可以浏览网页、运行代码、读写文件、操作桌面应用。与大多数需要大量配置和编程的代理框架不同，GenericAgent 的设计理念是 **随使用时间自动增长能力**——用得越多，技能越多。
+
+### 有什么不同？
+
+| | GenericAgent | ChatGPT / Claude | AutoGPT / CrewAI |
+|---|---|---|---|
+| **能操作你的电脑** | 能——浏览器、终端、文件 | 不能——仅文本 | 不确定 |
+| **跨会话记忆** | 有——分层记忆 + 自动结晶 | 没有——无状态 | 部分 |
+| **越用越强** | 是——自动结晶技能 | 不是 | 手动插件 |
+| **安装复杂度** | `python start.py` — 一条命令 | 网页注册 | 复杂配置 |
+| **Token 效率** | <30K 上下文窗口 | 全量上下文 | 200K–1M tokens |
+| **多 LLM 支持** | Claude, GPT, Gemini, DeepSeek, Ollama | 绑定一个 | 不确定 |
+| **MCP 支持** | 内置客户端 + 服务器 | 无/部分 | 无 |
+
+## 快速开始
+
+### 一条命令——就这么简单
+
+```bash
+git clone https://github.com/lsdefine/GenericAgent.git
+cd GenericAgent
+python start.py
+```
+
+这就是全部安装过程。`start.py` 自动完成：
+
+1. **检查依赖** — 自动安装缺失的 Python 包
+2. **运行设置向导** — 询问语言、AI 服务商和 API Key（仅首次）
+3. **启动最佳界面** — Qt 桌面应用 > Streamlit 网页 > 终端
+
+> **系统要求**：Python 3.10+ 和网络连接。就这些。
+>
+> **需要 API Key**：至少一个 LLM API Key（Anthropic、OpenAI、Google Gemini、DeepSeek 或本地 Ollama）。设置向导会引导你。
+
+### 其他启动方式
+
+| 方式 | 命令 | 适用场景 |
+|------|------|----------|
+| **自动（推荐）** | `python start.py` | 所有人 |
+| **重新配置** | `python start.py --configure` | 更换 API Key 或服务商 |
+| **终端模式** | `python start.py --cli` | 服务器、脚本 |
+| **API 服务器** | `python start.py --server` | 与其他应用集成 |
+| **服务管理** | `python start.py --hub` | 管理多个前端 |
+
+## 它能做什么？
+
+GenericAgent 通过 **9 个原子工具** 让 LLM 控制你的电脑：
+
+| 工具 | 功能 |
+|------|------|
+| `code_run` | 执行 Python 代码 |
+| `file_read` | 读取文件 |
+| `file_write` | 写入文件 |
+| `file_patch` | 修改文件（查找替换） |
+| `web_scan` | 通过浏览器读取网页内容 |
+| `web_execute_js` | 在浏览器中执行 JS（点击、输入、滚动） |
+| `ask_user` | 不确定时向你提问 |
+
+还有 2 个 **记忆管理工具**，让代理可以跨会话保存和召回信息。
+
+## 自我进化机制
+
+```
+新任务 → 自主探索（安装依赖、编写脚本、调试）
+      → 将执行路径结晶为可复用技能
+      → 写入记忆层
+      → 下次同类任务直接调用
+```
+
+5 层记忆系统：L0 元规则 → L1 索引 → L2 全局知识 → L3 任务技能 → L4 会话归档
+
+15+ 轮对话后，自动结晶引擎触发：技能保存 → 索引更新 → 检查点持久化 → 向量索引
+
+## v0.6.0 — "大厂怪兽"
+
+从 12 个开源 AI 代理框架中提取最佳模式：
+
+| 功能 | 用途 | 灵感来源 |
+|------|------|----------|
+| StateGraph | 构建结构化工作流 | LangGraph |
+| MCP 服务器 | 将工具暴露给 MCP 客户端 | MCP Python SDK |
+| Chroma 记忆 | 语义记忆搜索 | ChromaDB |
+| 闭环学习 | 5 阶段学习循环 | Hermes Agent |
+| Agent 移交 | 路由任务到专家子代理 | OpenAI Agents SDK |
+| Agent-as-Tool | 将代理作为工具嵌入 | OpenAI Agents SDK |
+| 沙箱执行 | 隔离运行不受信任的代码 | OpenAI Agents SDK |
+| 输入/输出护栏 | 自动验证用户输入和代理输出 | OpenAI Agents SDK |
+| 扩展钩子 | 代理事件的前后钩子 | pi-mono |
+| 上下文压缩 | 智能管理 Token 窗口 | pi-mono |
+| Flow 序列化 | JSON 图定义工作流 | Langflow |
+| DOM 智能 | 网页解析为可交互元素 | Browser-Use |
+| 浏览器代理 | 自主浏览网页 | Browser-Use |
+| 语音管线 | 语音对话 | AIAvatarKit |
+| VRM 虚拟形象 | 3D 动漫头像 | AIAvatarKit / VRoid Hub |
+
+## 常见问题
+
+**Q: 需要编程才能使用吗？**
+不需要。`python start.py` 一条命令搞定。只需要 Python 3.10+ 和一个 LLM API Key。
+
+**Q: 用哪个 LLM 服务商？**
+都可以。Claude 和 GPT 最强；DeepSeek 最便宜；Ollama 免费但需要 GPU。可以配置多个，自动切换。
+
+**Q: 数据安全吗？**
+GenericAgent 完全运行在你的本地电脑上。API Key 存储在本地 `mykey.py` 中。数据只发送到你选择的 LLM 服务商进行推理。
+
+---
+<a name="french"></a>
+
+## Qu'est-ce que GenericAgent ?
+
+**GenericAgent** est un agent AI auto-evolutif qui controle votre ordinateur. Vous lui donnez une tache en langage naturel — il trouve comment la faire, l'execute, et s'en souvient pour la prochaine fois.
+
+Contrairement aux chatbots qui ne font que parler, GenericAgent **agit** : il peut naviguer sur le web, executer du code, lire et ecrire des fichiers, et interagir avec les applications de votre bureau. Et contrairement a la plupart des frameworks d'agents qui necessitent une configuration complexe, GenericAgent est concu pour **developper ses propres capacites** au fil du temps — plus vous l'utilisez, plus il devient competent.
+
+### Quelle difference ?
+
+| | GenericAgent | ChatGPT / Claude | AutoGPT / CrewAI |
+|---|---|---|---|
+| **Agit sur votre ordi** | Oui — navigateur, terminal, fichiers | Non — texte seul | Variable |
+| **Memoire entre sessions** | Oui — memoire en couches + auto-crystallisation | Non — sans etat | Partiel |
+| **S'ameliore avec le temps** | Oui — crystallise les competences automatiquement | Non | Plugins manuels |
+| **Complexite d'installation** | `python start.py` — une commande | Inscription web | Config complexe |
+| **Efficacite Token** | <30K fenetre de contexte | Contexte complet | 200K–1M tokens |
+| **Multi-LLM** | Claude, GPT, Gemini, DeepSeek, Ollama | Bloque a un | Variable |
+| **Support MCP** | Client + serveur integres | Non / partiel | Non |
+
+## Demarrage rapide
+
+### Une commande — C'est tout
+
+```bash
+git clone https://github.com/lsdefine/GenericAgent.git
+cd GenericAgent
+python start.py
+```
+
+C'est toute l'installation. `start.py` fait tout :
+
+1. **Verifie les dependances** — installe automatiquement les paquets Python manquants
+2. **Lance l'assistant de configuration** — demande votre langue, fournisseur AI, et cle API (premiere fois seulement)
+3. **Demarre la meilleure interface** — Qt si disponible, sinon Streamlit, sinon terminal
+
+> **Prerequis** : Python 3.10+ et une connexion internet. C'est tout.
+>
+> **Cle API necessaire** : Au moins une cle API LLM (Anthropic, OpenAI, Google Gemini, DeepSeek, ou une instance Ollama locale). L'assistant vous guide.
+
+### Autres facons de demarrer
+
+| Methode | Commande | Pour qui |
+|---------|----------|----------|
+| **Auto (recommande)** | `python start.py` | Tout le monde |
+| **Reconfigurer** | `python start.py --configure` | Changer cle API ou fournisseur |
+| **Mode terminal** | `python start.py --cli` | Serveurs, scripting |
+| **Serveur API** | `python start.py --server` | Integration avec d'autres apps |
+| **Hub de services** | `python start.py --hub` | Gerer plusieurs frontends |
+
+### Premier lancement
+
+```
+============================================================
+  Bienvenue dans GenericAgent
+============================================================
+
+>> Verification des dependances...
+>> Installation de PySide6...
+>> Toutes les dependances sont installees
+
+============================================================
+  Premier lancement detecte — configuration requise
+============================================================
+
+  Choisissez la langue:
+    1) Francais
+    2) English
+    3) 中文
+  [1-3]: 1
+
+  Quel fournisseur d'IA utilisez-vous ?
+    1) Anthropic Claude
+    2) OpenAI GPT
+    3) Google Gemini
+    4) DeepSeek
+    5) Modele local (Ollama)
+    6) Plusieurs fournisseurs (basculement auto)
+    7) Je configurerai plus tard
+  [1-7]: 1
+
+  Entrez votre cle API Anthropic (ou Entree pour ignorer) :
+  API Key: sk-ant-...
+
+>> Configuration sauvegardee !
+>> Interface Qt detectee — lancement de l'interface graphique
+```
+
+## Que peut-il faire ?
+
+GenericAgent donne a un LLM **9 outils atomiques** pour controler votre ordinateur :
+
+| Outil | Ce qu'il fait |
+|-------|---------------|
+| `code_run` | Executer du code Python |
+| `file_read` | Lire des fichiers |
+| `file_write` | Ecrire ou creer des fichiers |
+| `file_patch` | Modifier des fichiers (rechercher et remplacer) |
+| `web_scan` | Lire le contenu web via un vrai navigateur |
+| `web_execute_js` | Executer du JavaScript dans le navigateur |
+| `ask_user` | Vous poser une question en cas de doute |
+
+Plus 2 **outils de gestion memoire** pour sauvegarder et rappeler des informations entre les sessions.
+
+### Exemples concrets
+
+| Ce que vous dites | Ce que GenericAgent fait |
+|---|---|
+| "Lis mes messages WeChat" | Installe les dependances, inverse la base de donnees, ecrit un script, sauvegarde comme competence |
+| "Surveille les actions et alerte-moi quand le prix baisse de 5%" | Installe les outils boursiers, construit un flux de selection, configure des verifs planifiees, sauvegarde |
+| "Envoie ce fichier par Gmail" | Configure OAuth, ecrit un script d'envoi, sauvegarde |
+| "Commande-moi un bubble tea" | Ouvre l'app de livraison dans le navigateur, navigue le menu, selectionne les articles, passe la commande |
+
+**La premiere fois**, GenericAgent explore, experimente, et trouve comment faire la tache. **Ensuite**, il rappelle la competence cristallisee et l'execute directement.
+
+## Comment fonctionne l'auto-evolution
+
+C'est ce qui rend GenericAgent fondamentalement different :
+
+```
+Nouvelle tache → Exploration autonome (installer deps, ecrire scripts, debugger)
+              → Crystalliser le chemin d'execution en competence reutilisable
+              → Ecrire dans la couche memoire
+              → Rappel direct pour la prochaine tache similaire
+```
+
+L'agent utilise un **systeme memoire a 5 couches** :
+
+| Couche | Role |
+|--------|------|
+| **L0** — Regles meta | Contraintes comportementales fondamentales |
+| **L1** — Index d'insights | Index de routage rapide |
+| **L2** — Faits globaux | Connaissances stables a long terme |
+| **L3** — Competences / SOPs | Procedures reutilisables etape par etape |
+| **L4** — Archives de session | Enregistrements historiques des taches |
+
+Apres 15+ tours de conversation, le **moteur d'auto-crystallisation** se declenche automatiquement.
+
+## v0.6.0 — "Big Tech Monster"
+
+La version 0.6.0 extrait les meilleurs modeles de 12 frameworks open-source et les unifie dans GenericAgent :
+
+| Fonctionnalite | Ce qu'elle vous apporte | Inspire par |
+|----------------|------------------------|-------------|
+| StateGraph | Construire des workflows structures | LangGraph |
+| Serveur MCP | Exposer les outils via le protocole MCP | MCP Python SDK |
+| Memoire Chroma | Recherche semantique dans la memoire | ChromaDB |
+| Boucle d'apprentissage ferme | Cycle en 5 phases : Decouvrir → Executer → Reflechir → Codifier → Ameliorer | Hermes Agent |
+| Divulgation progressive | Ne montrer que les competences pertinentes | Google ADK |
+| Transfert d'agent | Router les taches vers des sous-agents specialises | OpenAI Agents SDK |
+| Agent-comme-outil | Utiliser un agent comme outil dans un autre | OpenAI Agents SDK |
+| Execution sandbox | Executer du code non fiable en isolement | OpenAI Agents SDK |
+| Guardrails entree/sortie | Validation automatique | OpenAI Agents SDK |
+| Hooks d'extension | Systeme de plugins avec hooks avant/apres | pi-mono |
+| Compaction de contexte | Gestion intelligente de la fenetre de tokens | pi-mono |
+| Serialisation Flow | Definir des workflows en JSON | Langflow |
+| Intelligence DOM | Parser les pages web en elements interactifs | Browser-Use |
+| Agent navigateur | Navigation web autonome | Browser-Use |
+| Pipeline vocal | Conversation vocale | AIAvatarKit |
+| Avatar VRM | Avatar 3D anime avec lip-sync | AIAvatarKit / VRoid Hub |
+
+## FAQ
+
+**Q: Faut-il savoir programmer pour utiliser GenericAgent ?**
+Non. La commande `python start.py` s'occupe de tout. Il suffit de Python 3.10+ et d'une cle API.
+
+**Q: Quel fournisseur LLM choisir ?**
+Tous fonctionnent. Claude et GPT sont les plus capables ; DeepSeek est le moins cher ; Ollama est gratuit mais necessite un GPU. Vous pouvez en configurer plusieurs avec basculement automatique.
+
+**Q: Mes donnees sont-elles en securite ?**
+GenericAgent tourne entierement sur votre machine locale. Les cles API sont stockees dans `mykey.py` en local. Aucune donnee n'est envoyee ailleurs que vers votre fournisseur LLM pour l'inference.
+
+**Q: Puis-je utiliser GenericAgent sans navigateur ?**
+Oui. Le controle de navigateur n'est qu'un outil parmi d'autres. GenericAgent peut aussi travailler uniquement via execution de code, operations sur fichiers, et commandes terminal.
+
+## Historique des versions
+
+- **v0.6.0** (2026-05-04) — "Big Tech Monster" : 18 nouvelles fonctionnalites de 12 frameworks — StateGraph, MCP Serveur, Chroma Memoire, Apprentissage ferme, Transferts d'agents, Guardrails, Extensions, Flow, Agent navigateur, Pipeline vocal, Avatar VRM
+- **v0.5.0** (2026-05-03) — Moteur d'auto-crystallisation, durcissement production (52 problemes audités, tous les critiques corriges)
+- **v0.4.0** (2026-05-02) — Plugins d'outils dynamiques, client MCP, memoire vectorielle/RAG, orchestration multi-agents, serveur FastAPI, modes de raisonnement, interface Qt
+- **v1.0** (2026-01-16) — Premiere version publique
+
+## Support
+
+Si ce projet vous a aide, pensez a laisser une **Star !**
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><strong>Groupe WeChat 13</strong><br><img src="assets/images/wechat_group13.jpg" alt="QR Code Groupe WeChat 13" width="250"/></td>
+    </tr>
+  </table>
+</div>
+
+## Licence
+
+MIT License — voir [LICENSE](LICENSE)
+
+*Avertissement : Ce projet ne construit ni n'exploite aucun site web commercial. A l'exception de DintalClaw, aucune institution, organisation ou individu n'est actuellement officiellement autorise a mener des activites commerciales sous le nom GenericAgent.*

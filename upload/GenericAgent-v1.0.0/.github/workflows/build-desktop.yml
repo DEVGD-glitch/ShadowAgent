@@ -1,0 +1,183 @@
+# ══════════════════════════════════════════════════════════════════════════════
+#  GenericAgent — GitHub Actions CI/CD Workflow
+#  Builds desktop installers for Windows, macOS, and Linux on every release
+# ══════════════════════════════════════════════════════════════════════════════
+
+name: Build Desktop App
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g., 0.5.0)'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller PySide6 requests beautifulsoup4 websockets markdown2 bottle lxml python-dotenv Pillow
+
+      - name: Generate icon
+        run: |
+          python -c "
+          from PIL import Image
+          import os
+          os.makedirs('build', exist_ok=True)
+          img = Image.open('assets/images/logo.jpg')
+          sizes = [(16,16),(32,32),(48,48),(64,64),(128,128),(256,256)]
+          icons = [img.resize(s, Image.LANCZOS) for s in sizes]
+          icons[0].save('build/genericagent.ico', format='ICO', sizes=sizes, append_images=icons[1:])
+          print('Icon generated')
+          "
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --clean --noconfirm --name GenericAgent --windowed --icon build/genericagent.ico --add-data "i18n;i18n" --add-data "assets;assets" --add-data "frontends/skins;frontends/skins" --add-data "mcp_config.json;." --hidden-import=agentmain --hidden-import=llmcore --hidden-import=PySide6.QtCore --hidden-import=PySide6.QtGui --hidden-import=PySide6.QtWidgets --hidden-import=websockets --hidden-import=bottle --hidden-import=markdown2 --hidden-import=bs4 --runtime-hook build/runtime_hook.py --exclude-module pytest --exclude-module mypy --exclude-module tkinter frontends/qtapp.py
+
+      - name: Create NSIS installer
+        if: false  # Enable when NSIS is set up
+        run: |
+          makensis /V2 build/GenericAgent-installer.nsi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GenericAgent-Windows
+          path: dist/GenericAgent/
+
+      - name: Create ZIP for release
+        run: |
+          Compress-Archive -Path dist/GenericAgent/* -DestinationPath dist/GenericAgent-${{ github.ref_name }}-Windows.zip
+
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/GenericAgent-*.zip
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller PySide6 requests beautifulsoup4 websockets markdown2 bottle lxml python-dotenv
+
+      - name: Generate icon
+        run: |
+          mkdir -p build/icon.iconset
+          sips -z 16 16     assets/images/logo.jpg --out build/icon.iconset/icon_16x16.png
+          sips -z 32 32     assets/images/logo.jpg --out build/icon.iconset/icon_16x16@2x.png
+          sips -z 32 32     assets/images/logo.jpg --out build/icon.iconset/icon_32x32.png
+          sips -z 64 64     assets/images/logo.jpg --out build/icon.iconset/icon_32x32@2x.png
+          sips -z 128 128   assets/images/logo.jpg --out build/icon.iconset/icon_128x128.png
+          sips -z 256 256   assets/images/logo.jpg --out build/icon.iconset/icon_128x128@2x.png
+          sips -z 256 256   assets/images/logo.jpg --out build/icon.iconset/icon_256x256.png
+          sips -z 512 512   assets/images/logo.jpg --out build/icon.iconset/icon_256x256@2x.png
+          sips -z 512 512   assets/images/logo.jpg --out build/icon.iconset/icon_512x512.png
+          sips -z 1024 1024 assets/images/logo.jpg --out build/icon.iconset/icon_512x512@2x.png
+          iconutil -c icns build/icon.iconset -o build/genericagent.icns
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --clean --noconfirm --name GenericAgent --windowed --icon build/genericagent.icns --add-data "i18n:i18n" --add-data "assets:assets" --add-data "frontends/skins:frontends/skins" --add-data "mcp_config.json:." --hidden-import=agentmain --hidden-import=llmcore --hidden-import=PySide6.QtCore --hidden-import=PySide6.QtGui --hidden-import=PySide6.QtWidgets --hidden-import=websockets --hidden-import=bottle --hidden-import=markdown2 --hidden-import=bs4 --runtime-hook build/runtime_hook.py --exclude-module pytest --exclude-module mypy --exclude-module tkinter frontends/qtapp.py
+
+      - name: Create DMG
+        run: |
+          mkdir -p dist/dmg_tmp
+          cp -R dist/GenericAgent.app dist/dmg_tmp/
+          ln -s /Applications dist/dmg_tmp/Applications
+          VERSION=$(grep -m1 'version = ' pyproject.toml | sed 's/.*= *["'"'"']*\([^"'"'"']*\).*/\1/')
+          hdiutil create -volname GenericAgent -srcfolder dist/dmg_tmp -ov -format UDZO dist/GenericAgent-${VERSION}-macOS.dmg
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GenericAgent-macOS
+          path: dist/GenericAgent-*.dmg
+
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/GenericAgent-*.dmg
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libxkbcommon-x11-0 libxcb-xinerama0 libxcb-cursor0
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller PySide6 requests beautifulsoup4 websockets markdown2 bottle lxml python-dotenv
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --clean --noconfirm --name GenericAgent --add-data "i18n:i18n" --add-data "assets:assets" --add-data "frontends/skins:frontends/skins" --add-data "mcp_config.json:." --hidden-import=agentmain --hidden-import=llmcore --hidden-import=PySide6.QtCore --hidden-import=PySide6.QtGui --hidden-import=PySide6.QtWidgets --hidden-import=websockets --hidden-import=bottle --hidden-import=markdown2 --hidden-import=bs4 --runtime-hook build/runtime_hook.py --exclude-module pytest --exclude-module mypy --exclude-module tkinter frontends/qtapp.py
+
+      - name: Create AppImage
+        run: |
+          VERSION=$(grep -m1 'version = ' pyproject.toml | sed 's/.*= *["'"'"']*\([^"'"'"']*\).*/\1/')
+          mkdir -p dist/appimage/GenericAgent.AppDir/usr/bin
+          cp -R dist/GenericAgent/* dist/appimage/GenericAgent.AppDir/usr/bin/
+          cat > dist/appimage/GenericAgent.AppDir/AppRun << 'EOF'
+          #!/bin/bash
+          exec "$HOME/usr/bin/GenericAgent" "$@"
+          EOF
+          chmod +x dist/appimage/GenericAgent.AppDir/AppRun
+          cat > dist/appimage/GenericAgent.AppDir/genericagent.desktop << EOF
+          [Desktop Entry]
+          Name=GenericAgent
+          Exec=GenericAgent
+          Icon=genericagent
+          Type=Application
+          Categories=Utility;Network;
+          EOF
+          cp assets/images/logo.jpg dist/appimage/GenericAgent.AppDir/genericagent.png
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GenericAgent-Linux
+          path: dist/GenericAgent/
+
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/GenericAgent/**

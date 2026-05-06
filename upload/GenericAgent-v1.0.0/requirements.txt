@@ -1,0 +1,43 @@
+# ══════════════════════════════════════════════════════════════════════════════
+#  GenericAgent v1.0.0 — Python Dependencies
+#  Install: pip install -r requirements.txt
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ── Core (required) ──────────────────────────────────────────────────────────
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+bottle>=0.12.25
+websockets>=12.0
+markdown2>=2.4.0
+python-dotenv>=1.0.0
+numpy>=1.24.0
+
+# ── Security & Auth ─────────────────────────────────────────────────────────
+keyring>=25.0.0            # OS credential storage
+cryptography>=42.0.0       # Fernet fallback encryption
+PyJWT>=2.8.0               # JWT authentication
+slowapi>=0.1.9             # Rate limiting
+restrictedpython>=7.0      # Sandboxed code execution
+
+# ── Validation & Config ─────────────────────────────────────────────────────
+pydantic>=2.5.0            # Schema-validated configuration
+
+# ── Qt Desktop UI (required for .exe build) ──────────────────────────────────
+PySide6>=6.6.0
+PySide6-QtSvg>=6.6.0      # SVG icon rendering
+
+# ── LLM & Embeddings ────────────────────────────────────────────────────────
+chromadb>=0.4.22           # Vector memory store
+sentence-transformers>=2.2.2  # Semantic embeddings
+
+# ── Voice & Audio ───────────────────────────────────────────────────────────
+edge-tts>=6.1.9            # Free TTS (400+ voices)
+pyaudio>=0.2.14            # Audio I/O (optional, for voice pipeline)
+
+# ── Browser Control ──────────────────────────────────────────────────────────
+lxml>=4.9.0
+
+# ── Build / Packaging (required for .exe) ────────────────────────────────────
+pyinstaller>=6.0.0         # Creates standalone .exe
+Pillow>=10.0.0             # Icon generation for .exe
+certifi>=2023.0.0          # SSL certificates for bundled app
