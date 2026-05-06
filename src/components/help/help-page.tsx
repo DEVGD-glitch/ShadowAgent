@@ -15,7 +15,7 @@ import {
   FileText,
   Video,
   MessageCircle,
-  Github,
+  Star,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -230,7 +230,7 @@ export function HelpPage() {
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
             >
-              <Github className="h-5 w-5 text-white/60" />
+              <Star className="h-5 w-5 text-white/60" />
               <div>
                 <p className="text-white/80 text-sm font-medium">GitHub Repository</p>
                 <p className="text-white/40 text-xs">View source code</p>

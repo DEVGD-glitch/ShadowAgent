@@ -20,11 +20,11 @@
   "provider": "opencode",
   "model": "minimax-m2.5-free",
   "workingMode": "local",
-  "updatedAt": "2026-05-06T14:52:40.400Z",
-  "startedAt": "2026-05-06T14:52:40.399Z",
+  "updatedAt": "2026-05-06T16:52:40.391Z",
+  "startedAt": "2026-05-06T16:52:40.391Z",
   "state": "IN_PROGRESS",
   "createdAt": "2026-05-05T21:42:44.757Z",
-  "completedAt": "2026-05-06T14:51:14.991Z",
+  "completedAt": "2026-05-06T14:58:53.936Z",
   "pinned": true,
-  "interruptedAt": "2026-05-06T11:08:06.710Z"
+  "interruptedAt": "2026-05-06T15:16:24.335Z"
 }

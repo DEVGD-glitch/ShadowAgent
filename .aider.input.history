@@ -789,3 +789,13 @@
 
 # 2026-05-06T14:52:40.354Z
 +maintenant peut tu mettre le projet sur github sur le lien de ce depot https://github.com/DEVGD-glitch/GenericAgent_Shadow.git et renomme le projet ShadowAgent
+
+# 2026-05-06T15:05:46.987Z
++maintenant il me faut maintenant le build de l'app pour voir s'il permet une installation de shadowagent en un click 
+
+# 2026-05-06T15:14:55.700Z
++si c'est long laisse moi le build moi meme
+
+# 2026-05-06T16:52:40.352Z
++j'ai build l'app mais l'app affiche FATAL: Failed to build Tauri application: failed to initialize plugin `shell`: Error deserializing `plugins.shell` within your Tauri configuration: unknown field `scope`, expected `open`
++

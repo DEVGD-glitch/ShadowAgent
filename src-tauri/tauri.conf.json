@@ -40,7 +40,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "resources": ["binaries/backend-x86_64-pc-windows-msvc.exe"],
+    "resources": ["binaries/*"],
     "copyright": "Copyright 2025 Shadow Agent Team",
     "category": "Productivity",
     "shortDescription": "Shadow Agent — Your Self-Evolving AI Desktop Companion",
@@ -55,21 +55,6 @@
         "installMode": "currentUser",
         "languages": ["English"],
         "compression": "lzma"
-      }
-    }
-  },
-  "plugins": {
-    "shell": {
-      "open": true,
-      "sidecar": {
-        "backend": {
-          "path": "binaries/backend-x86_64-pc-windows-msvc.exe",
-          "scope": {
-            "name": "backend",
-            "sidecar": true,
-            "args": false
-          }
-        }
       }
     }
   }

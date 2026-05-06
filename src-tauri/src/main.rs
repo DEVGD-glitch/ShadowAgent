@@ -258,55 +258,86 @@ async fn start_backend(app: tauri::AppHandle, state: tauri::State<'_, AppState>)
         return Ok(true);
     }
 
-    let sidecar_command = app
-        .shell()
-        .sidecar("backend")
-        .map_err(|e| format!("Failed to create sidecar command: {}", e))?;
+    // Get the path to the backend executable from resources
+    let resource_path = app.path().resource_dir().map_err(|e| e.to_string())?;
+    let backend_exe = resource_path.join("binaries").join("backend-x86_64-pc-windows-msvc.exe");
+    
+    log_info(&format!("Looking for backend at: {:?}", backend_exe));
 
-    match sidecar_command.spawn() {
-        Ok((mut rx, child)) => {
-            let pid = child.pid();
-            backend.running = true;
-            backend.pid = Some(pid as u32);
-            backend.child_pid = Some(pid as u32);
-            log_info(&format!("Backend sidecar started with PID: {}", pid));
+    // Fallback to current directory for development
+    let exe_path = if backend_exe.exists() {
+        backend_exe
+    } else {
+        // Try current directory
+        std::env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(|p| p.to_path_buf()))
+            .unwrap_or_default()
+            .join("binaries")
+            .join("backend-x86_64-pc-windows-msvc.exe")
+    };
 
-            let app_handle = app.clone();
-            let backend_arc = state.backend.clone();
-            tauri::async_runtime::spawn(async move {
-                use tauri_plugin_shell::process::CommandEvent;
-                while let Some(event) = rx.recv().await {
-                    match event {
-                        CommandEvent::Stdout(line) => {
-                            log_info(&format!("[backend stdout] {}", String::from_utf8_lossy(&line)));
-                        }
-                        CommandEvent::Stderr(line) => {
-                            log_warn(&format!("[backend stderr] {}", String::from_utf8_lossy(&line)));
-                        }
-                        CommandEvent::Terminated(status) => {
-                            log_warn(&format!("Backend sidecar terminated: {:?}", status));
-                            if let Ok(mut b) = backend_arc.lock() {
-                                b.running = false;
-                                b.pid = None;
-                                b.child_pid = None;
-                            }
-                            let _ = app_handle.emit("backend-crashed", ());
-                            break;
-                        }
-                        CommandEvent::Error(err) => {
-                            log_error(&format!("[backend error] {}", err));
-                        }
-                        _ => {}
-                    }
-                }
-            });
+    log_info(&format!("Backend executable path: {:?}", exe_path));
 
-            Ok(true)
-        }
-        Err(e) => {
-            log_error(&format!("Failed to start backend sidecar: {}", e));
-            Err(format!("Failed to start backend: {}", e))
-        }
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+
+        let child = std::process::Command::new(&exe_path)
+            .creation_flags(CREATE_NO_WINDOW)
+            .spawn()
+            .map_err(|e| format!("Failed to start backend: {}", e))?;
+
+        let pid = child.id();
+        backend.running = true;
+        backend.pid = Some(pid);
+        backend.child_pid = Some(pid);
+        log_info(&format!("Backend started with PID: {}", pid));
+
+        let app_handle = app.clone();
+        let backend_arc = state.backend.clone();
+        tauri::async_runtime::spawn(async move {
+            // Wait for the child to exit
+            let result = child.wait();
+            log_warn(&format!("Backend process exited: {:?}", result));
+            if let Ok(mut b) = backend_arc.lock() {
+                b.running = false;
+                b.pid = None;
+                b.child_pid = None;
+            }
+            let _ = app_handle.emit("backend-crashed", ());
+        });
+
+        Ok(true)
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        let child = std::process::Command::new(&exe_path)
+            .spawn()
+            .map_err(|e| format!("Failed to start backend: {}", e))?;
+
+        let pid = child.id();
+        backend.running = true;
+        backend.pid = Some(pid);
+        backend.child_pid = Some(pid);
+        log_info(&format!("Backend started with PID: {}", pid));
+
+        let app_handle = app.clone();
+        let backend_arc = state.backend.clone();
+        tauri::async_runtime::spawn(async move {
+            let result = child.wait();
+            log_warn(&format!("Backend process exited: {:?}", result));
+            if let Ok(mut b) = backend_arc.lock() {
+                b.running = false;
+                b.pid = None;
+                b.child_pid = None;
+            }
+            let _ = app_handle.emit("backend-crashed", ());
+        });
+
+        Ok(true)
     }
 }
 
@@ -493,9 +524,9 @@ fn main() {
         .setup(move |app| {
             log_info("Setup hook running...");
 
-            // ── Auto-start the backend sidecar ──────────────────
-            // NOTE: Sidecar failure should NOT prevent the app from opening!
-            // The window will show "backend not available" if sidecar fails.
+            // ── Auto-start the backend process ──────────────────
+            // NOTE: Backend failure should NOT prevent the app from opening!
+            // The window will show "backend not available" if backend fails.
             let app_handle = app.handle().clone();
             let backend_arc = backend_state.clone();
 
@@ -503,66 +534,111 @@ fn main() {
                 // Wait for the window to render first
                 tokio::time::sleep(std::time::Duration::from_secs(2)).await;
 
-                log_info("Auto-starting backend sidecar...");
+                log_info("Auto-starting backend...");
 
-                let sidecar_result = app_handle.shell().sidecar("backend");
+                // Get the path to the backend executable
+                let exe_path = if let Ok(resource_dir) = app_handle.path().resource_dir() {
+                    let backend_path = resource_dir.join("binaries").join("backend-x86_64-pc-windows-msvc.exe");
+                    if backend_path.exists() {
+                        log_info(&format!("Found backend at resource path: {:?}", backend_path));
+                        backend_path
+                    } else {
+                        log_info("Backend not in resource path, trying executable directory");
+                        std::env::current_exe()
+                            .ok()
+                            .and_then(|p| p.parent().map(|p| p.to_path_buf()))
+                            .unwrap_or_default()
+                            .join("binaries")
+                            .join("backend-x86_64-pc-windows-msvc.exe")
+                    }
+                } else {
+                    std::env::current_exe()
+                        .ok()
+                        .and_then(|p| p.parent().map(|p| p.to_path_buf()))
+                        .unwrap_or_default()
+                        .join("binaries")
+                        .join("backend-x86_64-pc-windows-msvc.exe")
+                };
 
-                match sidecar_result {
-                    Ok(cmd) => {
-                        log_info("Sidecar command created, spawning...");
-                        match cmd.spawn() {
-                            Ok((mut rx, child)) => {
-                                let pid = child.pid();
-                                if let Ok(mut b) = backend_arc.lock() {
-                                    b.running = true;
-                                    b.pid = Some(pid as u32);
-                                    b.child_pid = Some(pid as u32);
+                log_info(&format!("Backend executable path: {:?}", exe_path));
+
+                if !exe_path.exists() {
+                    log_warn(&format!("Backend executable not found: {:?}", exe_path));
+                    log_warn("The app will open but backend features won't work.");
+                    let _ = app_handle.emit("backend-error", "Backend executable not found".to_string());
+                    return;
+                }
+
+                #[cfg(target_os = "windows")]
+                {
+                    use std::os::windows::process::CommandExt;
+                    const CREATE_NO_WINDOW: u32 = 0x08000000;
+
+                    match std::process::Command::new(&exe_path)
+                        .creation_flags(CREATE_NO_WINDOW)
+                        .spawn()
+                    {
+                        Ok(child) => {
+                            let pid = child.id();
+                            if let Ok(mut b) = backend_arc.lock() {
+                                b.running = true;
+                                b.pid = Some(pid);
+                                b.child_pid = Some(pid);
+                            }
+                            log_info(&format!("Backend started with PID: {}", pid));
+                            let _ = app_handle.emit("backend-started", pid.to_string());
+
+                            // Monitor process
+                            let app_h = app_handle.clone();
+                            let b_arc = backend_arc.clone();
+                            tauri::async_runtime::spawn(async move {
+                                let result = child.wait();
+                                log_warn(&format!("Backend terminated: {:?}", result));
+                                if let Ok(mut b) = b_arc.lock() {
+                                    b.running = false;
+                                    b.pid = None;
+                                    b.child_pid = None;
                                 }
-                                log_info(&format!("Backend sidecar started with PID: {}", pid));
-                                let _ = app_handle.emit("backend-started", pid.to_string());
-
-                                // Monitor sidecar process
-                                let app_h = app_handle.clone();
-                                let b_arc = backend_arc.clone();
-                                tauri::async_runtime::spawn(async move {
-                                    use tauri_plugin_shell::process::CommandEvent;
-                                    while let Some(event) = rx.recv().await {
-                                        match event {
-                                            CommandEvent::Stdout(line) => {
-                                                log_info(&format!("[backend] {}", String::from_utf8_lossy(&line)));
-                                            }
-                                            CommandEvent::Stderr(line) => {
-                                                log_info(&format!("[backend] {}", String::from_utf8_lossy(&line)));
-                                            }
-                                            CommandEvent::Terminated(status) => {
-                                                log_warn(&format!("Backend terminated: {:?}", status));
-                                                if let Ok(mut b) = b_arc.lock() {
-                                                    b.running = false;
-                                                    b.pid = None;
-                                                    b.child_pid = None;
-                                                }
-                                                let _ = app_h.emit("backend-crashed", format!("{:?}", status));
-                                                break;
-                                            }
-                                            CommandEvent::Error(err) => {
-                                                log_error(&format!("[backend error] {}", err));
-                                            }
-                                            _ => {}
-                                        }
-                                    }
-                                });
-                            }
-                            Err(e) => {
-                                log_error(&format!("Failed to spawn sidecar: {}", e));
-                                let _ = app_handle.emit("backend-error", format!("Spawn failed: {}", e));
-                            }
+                                let _ = app_h.emit("backend-crashed", format!("{:?}", result));
+                            });
+                        }
+                        Err(e) => {
+                            log_error(&format!("Failed to start backend: {}", e));
+                            let _ = app_handle.emit("backend-error", format!("Spawn failed: {}", e));
                         }
                     }
-                    Err(e) => {
-                        log_warn(&format!("Sidecar not found (non-fatal): {}", e));
-                        log_warn("The app will open but backend features won't work.");
-                        log_warn("To fix: build the sidecar with PyInstaller before 'tauri build'");
-                        let _ = app_handle.emit("backend-error", format!("Sidecar not found: {}", e));
+                }
+
+                #[cfg(not(target_os = "windows"))]
+                {
+                    match std::process::Command::new(&exe_path).spawn() {
+                        Ok(child) => {
+                            let pid = child.id();
+                            if let Ok(mut b) = backend_arc.lock() {
+                                b.running = true;
+                                b.pid = Some(pid);
+                                b.child_pid = Some(pid);
+                            }
+                            log_info(&format!("Backend started with PID: {}", pid));
+                            let _ = app_handle.emit("backend-started", pid.to_string());
+
+                            let app_h = app_handle.clone();
+                            let b_arc = backend_arc.clone();
+                            tauri::async_runtime::spawn(async move {
+                                let result = child.wait();
+                                log_warn(&format!("Backend terminated: {:?}", result));
+                                if let Ok(mut b) = b_arc.lock() {
+                                    b.running = false;
+                                    b.pid = None;
+                                    b.child_pid = None;
+                                }
+                                let _ = app_h.emit("backend-crashed", format!("{:?}", result));
+                            });
+                        }
+                        Err(e) => {
+                            log_error(&format!("Failed to start backend: {}", e));
+                            let _ = app_handle.emit("backend-error", format!("Spawn failed: {}", e));
+                        }
                     }
                 }
             });
